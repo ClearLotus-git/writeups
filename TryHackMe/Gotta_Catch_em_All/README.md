@@ -1,13 +1,13 @@
 # Gotta Catch'em All Room
 
-
 ![image](https://user-images.githubusercontent.com/71709864/220810615-fbeacb2d-d011-4b65-b7a9-d6e2543b5cff.png)
 
+---
 
-____________________________________________________________
+## Overview  
+This room is inspired by the original Pokémon series. The goal is to collect all the Pokémon hidden throughout the room by solving various challenges.
 
-## This room is based on the original Pokemon series. Can you obtain all the Pokemon in this room?
-
+---
 
 ## Question 1
 
@@ -16,10 +16,7 @@ For this room I started with an nmap scan on the attack machine.
 ```
 nmap -sC -sV {Machine-IP}
 ```
-I can see there is an ssh & HTTP port open. We will use both of these ports for this room.
-I then opened my browser and searched the ip address. Looking through the page source I came across 
-a comment in the code that read:  
-
+Checking the browser console led to a dead-end, showing only a list of Pokémon names. Looking further in the source code, I found another comment above this one:
 ```
 <!--check console for extra surprise!)--> 
 ```
@@ -28,46 +25,39 @@ I again looked at the source aand looked above the previous "surprise"
 
 ![image](https://user-images.githubusercontent.com/71709864/220814080-0b063f36-5633-4bc3-9bdf-a2ab4db83550.png)
 
-I assumed this could be username and password so I attemptted to ssh into the machine.
+I suspected these might be credentials, so I attempted to SSH into the machine using them:
 ```
 ssh username@{Machine-IP}
 ```
 
-The ssh worked and I was now connected to the machine. I went to the users home directory and found an 
-unzip file.
+The SSH connection succeeded. Once connected, I navigated to the user's home directory and found a zipped file. I extracted it using:
 
 
 ```
 unzip <file_name.zip>
 ```
 
-This is the first file for Question 1 Grass-Type Pokemon
+This file contained data related to Grass-type Pokémon, but it was encoded in hexadecimal. To decode it, I used Cryptii’s Hex Decoder.
 
-I looks like the file contents are in hexidecimal. I used
-
- [https://cryptii.com/pipes/hex-decoder](https://hexdecoder.com/)
 
 
 ## Question 2
 
-I used the 'locate' command along with the name in the question to find the next pokemon
-
+To find the next Pokémon, I used the locate command with the keyword from the question:
 ```
 locate --all water-type 2>/dev/null
 ```
 
-After decoding, I Found my answer!
-
-Caesar Cipher Decoder: https://cryptii.com/pipes/caesar-cipher
+After locating the file, I decoded its contents, which appeared to be encrypted with a Caesar cipher. I used the Caesar cipher decoder on Cryptii to get the answer.
 
 
 ## Question 3
 
-After locating the first two Pokemon, you'll move over to the '/etc/' directory, and there will be a weird directory located there titled 'Why_am_i_here?'
-
-After changing to the correct directory, you'll see the file we need for our third question!
-
-This one needs to be decoded using base64.
+For the third Pokémon, I navigated to the /etc/ directory and discovered an oddly named directory:
+```
+/etc/Why_am_i_here?
+```
+Inside this directory was the file needed for Question 3. The content was Base64 encoded, so I decoded it using:
 
 ```
 echo -n 'string' | base64 --decode
@@ -75,25 +65,31 @@ echo -n 'string' | base64 --decode
 
 ## Question 4 
 
-Question 4 we need to find roots favorite pokemon. I previously saw an ash username and search around to 
-see if we could escalate privieges. Having no luck, I searched around in the /home directory. Here in the /Videos file 
-a file inside that looked suspicious.  
-As I transversed through the directories I found the end file and opened it.
+The final question asked for the root's favorite Pokémon. Earlier, I noticed a user named ash and tried to explore possible privilege escalation routes but had no luck initially. I searched the /home directory and found a suspicious file inside /home/ash/Videos.
 
-Hmm, this looks like a fake C++ file, maybe it has something in it?
+The file, named something like Could_this_be_what_Im_looking_for?.cplusplus, looked like a fake C++ file. I opened it with:
 
 ```
 cat Could_this_be_what_Im_looking_for?.cplusplus
 ```
 
-I used this to login to the ash user. I then ran a command to check the permissions of the ash user
+Using information from this file, I was able to log in as ash. Running:
+
+```
+su ash
+```
+Now that i was the ash user i can check privileges using:
 
 ```
 sudo -lah
 ```
-It shows that ash has permission to open the last file 
+It shows that ash has permission to open the last file.  We see that (ALL : ALL ) ALL , that means if we’ll type “sudo su” command in our terminal we don’t need to put any creds uaing:
 ```
-roots-pokemon.txt
+sudo su
+```
+Now that we are root, we should be able to read roots favorite pokemon :).
+```
+cat roots-pokemon.txt
 ```
 
 Here we have the final flag and can mark this room as complete. 
