@@ -464,10 +464,9 @@ cat /root/root.txt
 ```
 
 ## ✅ Conclusion
-This box was rated MEDIUM on HacktheBox but as always medium doesnt actually mean medium..
-as it took me over 5 days to even break the first SSRF_RCE.py script.
-The lessons learned here was to never give up, the power of SSRF to RCE, local privilege escalation through
-misconfigurations, and practical usage of JWTs in exploitation. I hope you enjoyed!
+This box was rated MEDIUM on HackTheBox, but as always, "medium" doesn’t quite capture the challenge — it took me over five days to even break the initial SSRF_RCE.py script.
+The key takeaways from this experience were the importance of persistence, the true power of SSRF leading to RCE, local privilege escalation through misconfigurations, and practical applications of JWTs in exploitation.
+I hope you find this writeup insightful and enjoyable!
 
 
 
