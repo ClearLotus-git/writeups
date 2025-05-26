@@ -1,8 +1,5 @@
 # Gotta Catch'em All Room
 
-![Gotta Catch'em All Room](https://tryhackme-images.s3.amazonaws.com/room-icons/bcaba4ace2cd7264819139cec6677ebe.jpeg)
-
-
 
 ---
 
