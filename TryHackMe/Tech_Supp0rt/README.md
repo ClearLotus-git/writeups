@@ -2,7 +2,7 @@
 ![image](https://user-images.githubusercontent.com/71709864/221074068-11d3169e-530e-4df7-80bb-a91efe0bcc33.png)
 
 
-# Tech_Supp0rt: 1
+# Tech_Supp0rt
 
 ## Hack into the machine and investigate the target.
 
