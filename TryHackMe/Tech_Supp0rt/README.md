@@ -1,5 +1,8 @@
 # Tech_Supp0rt: 1 
 
+![TechSupport Room Image](https://tryhackme-images.s3.amazonaws.com/room-icons/4128774917fae71184e79acab2007e93.png)
+
+
 ## Hack into the machine and investigate the target.
 
 I started of this challenge by running an nmap scan and also ran a gobuster scan.
