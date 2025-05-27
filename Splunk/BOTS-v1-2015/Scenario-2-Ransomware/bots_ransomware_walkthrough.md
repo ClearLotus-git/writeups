@@ -99,12 +99,17 @@ During the initial Cerber infection a VB script is run. The entire script from t
 
 **Steps Taken:**
 
-- .vbs extension VB
-- 
-- 
+- .vbs extensions VB "VisualBasic"
+- looking for a script that has run -> syslogs have process IDS
+- ParentCommandLine
   ```splunk
-  [your Splunk query here]
+  index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "*.vbs"
+  | eval length=len(ParentCommandLine)
+  | table ParentCommandLine, length
+  
+[View Screenshot](screenshots/Screenshot%202025-05-27%20172151.png)
 
+Answer: 4490
 
 ## Question #205
 
