@@ -108,25 +108,31 @@ During the initial Cerber infection a VB script is run. The entire script from t
   | eval length=len(ParentCommandLine)
   | table ParentCommandLine, length
   
-[View Screenshot](screenshots/Screenshot%202025-05-27%20172151.png)
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20172151.png)
 
 Answer: 4490
 
 ## Question #205
 
 **Question:**  
-[Write the question here exactly as asked]
+What is the name of the USB key inserted by Bob Smith?
 
 ---
 
 **Steps Taken:**
 
-- [Describe step 1]
-- [Describe step 2]
-- [Any queries used – paste as a code block:]
+- registry events -> usb and adding/ user experience events
+- key_path field
+- online searching for windows registry usb artifacts
+- website: https://www.magnetforensics.com/blog/artifact-profile-usb-devices/ 
   ```splunk
-  [your Splunk query here]
+  index=botsv1 sourcetype="winregistry" key_path="*Windows Portable Devices*"
 
+[View Screenshot: online search magnet forensics ](screenshots/Screenshot%202025-05-27%20173011.png)  
+[View Screenshot: Splunk search results  ](screenshots/Screenshot%202025-05-27%20173641.png)  
+[View Screenshot: Splunk search results ](screenshots/Screenshot%202025-05-27%20173654.png)
+
+Answer: MIRANDA_PRI
 
 ## Question #206
 **Question:**  
