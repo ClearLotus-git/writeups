@@ -45,7 +45,8 @@ Amongst the Suricata signatures that detected the Cerber malware, which one aler
   ```splunk
   index=botsv1 sourcetype="suricata" "Cerber" | stats count by suricata_signature_id
 
-[View the Screenshot]
+[View Screenshot](screenshots/Screenshot%202025-05-27%20160323.png)
+
 Answer:
 2816763 (1:2816763:4 but only 7 digits)
 ## Question #202
