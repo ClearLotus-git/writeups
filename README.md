@@ -1,7 +1,7 @@
 # CTF Writeups - ClearLotus
 
 This is a Capture The Flag (CTF) writeups repository!
-I have been done many ctfs but really not great at documenting them.
+I have done many ctfs but really not great at documenting them.
 Usually it involves notepad while jotting down only notes I'd understand :D
 There aren't many writeups on here now.. just a couple that i could find from
 my earlier days along with some of the recent ones! I'm going to try to update 
