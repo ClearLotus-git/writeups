@@ -11,6 +11,8 @@ Ransomware screen shot: https://botscontent.netlify.app/v1/cerber-sshot.png
 
 Bots v1 sourcetype summary: https://botscontent.netlify.app/v1/bots_sourcetypes.html
 
+https://www.splunk.com/pdfs/solution-guides/splunk-quick-reference-guide.pdf (** Reference**)
+
 ## Question #200
 
 **Question:**  
@@ -136,17 +138,37 @@ Answer: MIRANDA_PRI
 
 ## Question #206
 **Question:**  
-[Write the question here exactly as asked]
+Bob Smith's workstation (we8105desk) was connected to a file server during the ransomware outbreak. What is the IPv4 address of the file server?
 
 ---
 
 **Steps Taken:**
 
-- [Describe step 1]
-- [Describe step 2]
-- [Any queries used – paste as a code block:]
+- smb traffic stream
+- dest_ip top number
   ```splunk
-  [your Splunk query here]
+  index=botsv1 sourcetype="stream:smb"
+[View Screenshot: Splunk search results  ](screenshots/Screenshot%202025-05-27%20174830.png)
+
+Answer: 192.168.250.20
+
+ ## Question #207
+
+**Question:**  
+How many distinct PDFs did the ransomware encrypt on the remote file server?
+---
+
+**Steps Taken:**
+
+- win event logs looking for pdf
+- deal with windows shares and narrow the search by looking for distinct filenames for the extension in question
+- hostnames
+  ```splunk
+  
+  
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20172151.png)
+
+Answer: 4490 
 
 
 
