@@ -27,6 +27,7 @@ What was the most likely IPv4 address of `we8105desk` on 24AUG2016?
   ```splunk
   index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "we8105desk"
 [View the Screenshot:Splunk search results](screenshots/Screenshot%202025-05-27%20153321.png)
+
 Answer:
 192.168.250.100
 
