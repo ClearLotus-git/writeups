@@ -13,12 +13,4 @@ I'll be using this space to document my process, techniques, and takeaways from 
 
 ---
 
-
-## Connect with Me
-
-GitHub: [github.com/ClearLotus](https://github.com/ClearLotus)  
-LinkedIn: [Nicholas D'Acri](https://www.linkedin.com/in/nicholas-dacri-a3a373182/)
-
----
-
 > These writeups will be shared only after the respective challenges have officially retired, in accordance with platform rules.
