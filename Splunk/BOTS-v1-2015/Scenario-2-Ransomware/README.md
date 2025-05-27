@@ -7,5 +7,13 @@ After the excitement of yesterday, Alice has started to settle into her new job.
 
 Alice has seen this before... ransomware. After a quick conversation with Bob, Alice determines that Bob found a USB drive in the parking lot earlier in the day, plugged it into his desktop, and opened up a word document on the USB drive called "Miranda_Tate_unveiled.dotm". With a resigned sigh she begins to dig into the problem...
 
-## More Info
-There are 12 questions that you need to go through and answer using splunk. I will share the queries and screenshots.
+## Contents
+There are 12 questions that you need to go through and answer using splunk. 
+-`bots_ransomware_walkthrough.md` will contain the step by analysis
+-`queries/` folder is for relevant Splunk SPL queries
+-`screenshots/` folder is for any Splunk dashboard screenshots or visualizations
+
+## Source and Credits
+This challenge scenario is part of [Splunk Boss of the SOC (BOTS) v1 – 2015](https://bots.splunk.com/event/3oQ7sqI5bajOCP43o0svqT/scenario/5vqgZJanGgTCXawi4nliIF).  
+All rights to the scenario, data, and challenge content belong to Splunk.  
+This write-up is an independent analysis for educational and portfolio purposes only.
