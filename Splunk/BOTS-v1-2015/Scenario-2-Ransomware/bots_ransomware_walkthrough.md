@@ -8,6 +8,7 @@ A ransomware incident has occurred within the environment. Your task as a SOC an
 - Suggest detection methods for future prevention
 
 Ransomware screen shot: https://botscontent.netlify.app/v1/cerber-sshot.png
+
 Bots v1 sourcetype summary: https://botscontent.netlify.app/v1/bots_sourcetypes.html
 
 ## Question #200
@@ -52,19 +53,24 @@ Answer:
 ## Question #202
 
 **Question:**  
-[Write the question here exactly as asked]
+What fully qualified domain name (FQDN) does the Cerber ransomware attempt to direct the user to at the end of its encryption phase?
 
 ---
 
 **Steps Taken:**
 
-- [Describe step 1]
-- [Describe step 2]
-- [Any queries used – paste as a code block:]
+- sysmonlogs has events whenever a process executes dns query X
+- Search stream: dns datas
+- requests made from infected host: 192.168.250.100
+- what kind of query was made A records/query_type{}
   ```splunk
-  [your Splunk query here]
+  index=botsv1 sourcetype="stream:dns" "192.168.250.100" record_type=A |stats count by "query{}"
 
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20162732.png)
+[View Screenshot: Event details](screenshots/Screenshot%202025-05-27%20162844.png)
 
+Answer:
+cerberhhyed5frqa.xmfir0.win
 ## Question #203
 **Question:**  
 [Write the question here exactly as asked]
