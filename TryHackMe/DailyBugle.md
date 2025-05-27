@@ -165,10 +165,4 @@ sudo yum -c $TF/x --enableplugin=y
 # ROOT!
 
 ### Conclusion
-The Daily Bugle room demonstrated how critical vulnerabilities in outdated web applications like Joomla 3.7.0 can lead to full system compromise. Starting with enumeration, we identified Joomla running on the target and used a known SQL Injection (CVE-2017-8917) to extract credentials from the database. Cracking the password hash with john gave us access to the Joomla admin panel, where we leveraged template editing for Remote Code Execution.
-From there, we escalated our privileges by inspecting the configuration.php file to obtain the MySQL root password, which was reused by a local user. Switching users allowed us to enumerate sudo privileges, revealing that the user jjameson could run yum as root without a password. Using a GTFOBins technique, we exploited the yum plugin system to spawn a root shell.
-This room emphasizes the importance of:
-Keeping web applications up to date.
-Avoiding credential reuse.
-Regularly auditing sudo privileges.
-Understanding how misconfigurations and known exploits chain together to compromise a system.
+The Daily Bugle room demonstrated how critical vulnerabilities in outdated web applications like Joomla 3.7.0 can lead to full system compromise. Starting with enumeration, we identified Joomla running on the target and used a known SQL Injection (CVE-2017-8917) to extract credentials from the database. Cracking the password hash with john gave us access to the Joomla admin panel, where we leveraged template editing for Remote Code Execution. From there, we escalated our privileges by inspecting the configuration.php file to obtain the MySQL root password, which was reused by a local user. Switching users allowed us to enumerate sudo privileges, revealing that the user jjameson could run yum as root without a password. Using a GTFOBins technique, we exploited the yum plugin system to spawn a root shell.
