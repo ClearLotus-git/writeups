@@ -72,33 +72,36 @@ What fully qualified domain name (FQDN) does the Cerber ransomware attempt to di
 
 Answer:
 cerberhhyed5frqa.xmfir0.win
+
 ## Question #203
 **Question:**  
-[Write the question here exactly as asked]
+What was the first suspicious domain visited by we8105desk on 24AUG2016?
 
 ---
 
 **Steps Taken:**
 
-- [Describe step 1]
-- [Describe step 2]
-- [Any queries used – paste as a code block:]
-  ```splunk
-  [your Splunk query here]
+- Staying in the same search query
+- two of them stood out to me
 
+  ```splunk
+  index=botsv1 sourcetype="stream:dns" "192.168.250.100" record_type=A |stats count by "query{}" | sort -_time
+
+Answer:
+solidaritedeproximite.org
 
 ## Question #204
 
 **Question:**  
-[Write the question here exactly as asked]
+During the initial Cerber infection a VB script is run. The entire script from this execution, pre-pended by the name of the launching .exe, can be found in a field in Splunk. What is the length of the value of this field?
 
 ---
 
 **Steps Taken:**
 
-- [Describe step 1]
-- [Describe step 2]
-- [Any queries used – paste as a code block:]
+- .vbs extension VB
+- 
+- 
   ```splunk
   [your Splunk query here]
 
