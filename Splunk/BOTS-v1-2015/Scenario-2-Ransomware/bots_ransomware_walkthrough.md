@@ -26,7 +26,7 @@ What was the most likely IPv4 address of `we8105desk` on 24AUG2016?
 - Query used:  
   ```splunk
   index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "we8105desk"
-[View the Screenshot](screenshots/Screenshot%202025-05-27%20153321.png)
+[View the Screenshot:Splunk search results](screenshots/Screenshot%202025-05-27%20153321.png)
 Answer:
 192.168.250.100
 
@@ -46,7 +46,7 @@ Amongst the Suricata signatures that detected the Cerber malware, which one aler
   ```splunk
   index=botsv1 sourcetype="suricata" "Cerber" | stats count by suricata_signature_id
 
-[View Screenshot](screenshots/Screenshot%202025-05-27%20160323.png)
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20160323.png)
 
 Answer:
 2816763 (1:2816763:4 but only 7 digits)
@@ -67,7 +67,8 @@ What fully qualified domain name (FQDN) does the Cerber ransomware attempt to di
   index=botsv1 sourcetype="stream:dns" "192.168.250.100" record_type=A |stats count by "query{}"
 
 [View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20162732.png)
-[View Screenshot: Event details](screenshots/Screenshot%202025-05-27%20162844.png)
+
+[View Screenshot: VirusTotal](screenshots/Screenshot%202025-05-27%20162844.png)
 
 Answer:
 cerberhhyed5frqa.xmfir0.win
