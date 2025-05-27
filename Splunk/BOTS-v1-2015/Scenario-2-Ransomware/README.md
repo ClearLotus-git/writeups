@@ -16,4 +16,7 @@ There are 12 questions that you need to go through and answer using splunk.
 ## Source and Credits
 This challenge scenario is part of [Splunk Boss of the SOC (BOTS) v1 – 2015](https://bots.splunk.com/event/3oQ7sqI5bajOCP43o0svqT/scenario/5vqgZJanGgTCXawi4nliIF).  
 All rights to the scenario, data, and challenge content belong to Splunk.  
+Splunk quick reference guide:
+https://www.splunk.com/pdfs/solution-guides/splunk-quick-reference-guide.pdf
+
 This write-up is an independent analysis for educational and portfolio purposes only.
