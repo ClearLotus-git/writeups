@@ -1,6 +1,6 @@
-# 🧠 CTF Writeups - ClearLotus
+# CTF Writeups - ClearLotus
 
-Welcome to my Capture The Flag (CTF) writeups repository!
+This is a Capture The Flag (CTF) writeups repository!
 I have been done many ctfs but really not great at documenting them.
 Usually it involves notepad while jotting down only notes I'd understand :D
 There aren't many writeups on here now.. just a couple that i could find from
@@ -13,22 +13,8 @@ I'll be using this space to document my process, techniques, and takeaways from 
 
 ---
 
-## 📌 Status
 
-📝 This is a new repository — I’ll be actively adding detailed writeups soon.  
-Check back for updates or follow to see progress!
-
----
-
-## 🔍 What to Expect
-
-- Step-by-step walkthroughs of HTB and THM challenges
-- Screenshots, payloads, scripts, and notes
-- Lessons learned, tools used, and tactics explained
-
----
-
-## 🔗 Connect with Me
+## Connect with Me
 
 📂 GitHub: [github.com/ClearLotus](https://github.com/ClearLotus)  
 💼 LinkedIn: [Nicholas D'Acri](https://www.linkedin.com/in/nicholas-dacri-a3a373182/)
