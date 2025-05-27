@@ -17,5 +17,5 @@ What was the most likely IPv4 address of we8105desk on 24AUG2016?
 -sourcetype list-> wineventlog/sysmonlogs
 `index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "we8105desk"`
 -event sampling 1:1000
-![We8105desk IP on 24AUG2016](https://raw.githubusercontent.com/username/repo/branch/screenshots/we8105desk_ip.png)
+![We8105desk IP on 24AUG2016](https://github.com/ClearLotus-git/writeups/blob/main/Splunk/BOTS-v1-2015/Scenario-2-Ransomware/screenshots/Screenshot%202025-05-27%20153321.png)
 
