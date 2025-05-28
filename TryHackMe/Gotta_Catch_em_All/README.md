@@ -1,5 +1,11 @@
 # Gotta Catch'em All Room
 
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/56cd072b-fc45-4deb-a4b0-7ba43aca8ec6" alt="gottacatchemallthm" width="300">
+</p>
+
+
+
 
 ---
 
