@@ -88,7 +88,7 @@ Now that i was the ash user i can check privileges using:
 ```
 sudo -lah
 ```
-It shows that ash has permission to open the last file.  We see that (ALL : ALL ) ALL , that means if we’ll type “sudo su” command in our terminal we don’t need to put any creds uaing:
+It shows that ash has permission to open the last file.  We see that (ALL : ALL ) ALL , that means if we’ll type “sudo su” command in our terminal we don’t need to put any creds using:
 ```
 sudo su
 ```
