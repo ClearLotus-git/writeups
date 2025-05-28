@@ -28,13 +28,12 @@ What was the most likely IPv4 address of `we8105desk` on 24AUG2016?
 - Query used:  
   ```splunk
   index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "we8105desk"
-[View the Screenshot:Splunk search results](screenshots/Screenshot%202025-05-27%20153321.png)
+[View the Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20153321.png)
 
 Answer:
 192.168.250.100
 
 ## Question #201
-
 **Question:**  
 Amongst the Suricata signatures that detected the Cerber malware, which one alerted the fewest number of times? Submit ONLY the signature ID value as the answer.
 
@@ -53,8 +52,8 @@ Amongst the Suricata signatures that detected the Cerber malware, which one aler
 
 Answer:
 2816763 (1:2816763:4 but only 7 digits)
-## Question #202
 
+## Question #202
 **Question:**  
 What fully qualified domain name (FQDN) does the Cerber ransomware attempt to direct the user to at the end of its encryption phase?
 
@@ -94,7 +93,6 @@ Answer:
 solidaritedeproximite.org
 
 ## Question #204
-
 **Question:**  
 During the initial Cerber infection a VB script is run. The entire script from this execution, pre-pended by the name of the launching .exe, can be found in a field in Splunk. What is the length of the value of this field?
 
@@ -152,10 +150,10 @@ Bob Smith's workstation (we8105desk) was connected to a file server during the r
 
 Answer: 192.168.250.20
 
- ## Question #207
-
+## Question #207
 **Question:**  
 How many distinct PDFs did the ransomware encrypt on the remote file server?
+
 ---
 
 **Steps Taken:**
@@ -164,12 +162,95 @@ How many distinct PDFs did the ransomware encrypt on the remote file server?
 - deal with windows shares and narrow the search by looking for distinct filenames for the extension in question
 - hostnames
   ```splunk
+  index=botsv1 sourcetype="wineventlog*" "*.pdf" dest_nt_host="we9041srv.waynecorpinc.local" Source_Address="192.168.250.100" | table Relative_Target_Name | dedup Relative_Target_Name | stats count
   
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20184144.png)
+
+Answer: 257 
+
+## Question #208
+
+**Question:**  
+
+The VBscript found in question 204 launches 121214.tmp. What is the ParentProcessId of this initial launch?
+
+---
+
+**Steps Taken:**
+
+- temp file, sysmon
+- ParentProcessId, image id
+- 121214.tmp
+  ```splunk
+  index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "121214.tmp"
+  | table _time, host, Image, CommandLine, ParentImage, ParentCommandLine, ProcessId, ParentProcessId, User
+  | sort _time
   
-[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20172151.png)
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20191920.png)
 
-Answer: 4490 
+Answer: 3968 
 
+## Question #209
 
+**Question:**  
+
+The Cerber ransomware encrypts files located in Bob Smith's Windows profile. How many .txt files does it encrypt?
+
+---
+
+**Steps Taken:**
+
+- user profile, sysmon, filename extension
+- text files. file server, workstatiopn limit: we8105desk
+- Event code2 
+- -Bob's windows profile
+  ```splunk
+  index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational"  "we8105desk" TargetFilename="C:\\Users\\bob.smith.WAYNECORPINC\\*.txt"
+  
+[View Screenshot:Splunk search results](screenshots/Screenshot%202025-05-27%20192628.png)  
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20192916.png)  
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20193014.png)  
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20193557.png)
+ 
+Answer: 406 
+
+## Question #210  
+
+**Question:**   
+
+The malware downloads a file that contains the Cerber ransomware cryptor code. What is the name of that file?
+
+---
+
+**Steps Taken:**
+
+- suricada
+- related to a url: cerberhhyed5frqa.xmfir0.win X
+-  http event; solidaritedeproximite.org    V
+  ```splunk
+   index=botsv1 sourcetype="suricata" "solidaritedeproximite.org"
+```
+
+[View Screenshot: Splunk search results](screenshots/Screenshot%202025-05-27%20195437.png)
+
+Answer: mhtr.jpg
+
+## Question #211
+**Question:**  
+Now that you know the name of the ransomware's encryptor file, what obfuscation technique does it likely use?
+
+---
+
+**Steps Taken:**
+
+- jpg
+- malware hidden inside the file  
+  ```splunk
+  index=botsv1 sourcetype="stream:http" "mhtr.jpg"
+[View Screenshot: Splunk search result](screenshots/Screenshot%202025-05-27%20200739.png)
+
+Answer:
+steganography
+  
 
 
