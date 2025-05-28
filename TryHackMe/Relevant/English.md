@@ -66,6 +66,8 @@ cd c:\Users\Bob\Desktop
 ```
 user.txt
 
+---------------------->>>> priv escalation need to redo. <<<<<----------------- start here to see about exploit
+i cant remember how i did it the first time 
 Priv Escalation
 
 ```
@@ -102,8 +104,8 @@ set session 1
 run
 ```
 now need to run the printspooler again
-```
 
 
 
-I couldnt get the smb share to copy the file over to my machine and still not sure of the error
+
+#I couldnt get the smb share to copy the file over to my machine and still not sure of the error
