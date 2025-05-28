@@ -1,6 +1,8 @@
 # Tech_Supp0rt: 1 
 
-![TechSupport Room Image](https://tryhackme-images.s3.amazonaws.com/room-icons/4128774917fae71184e79acab2007e93.png)
+<p align="left">
+  <img src="https://tryhackme-images.s3.amazonaws.com/room-icons/4128774917fae71184e79acab2007e93.png" alt="TechSupport Room Image" width="250">
+</p>
 
 
 ## Hack into the machine and investigate the target.
