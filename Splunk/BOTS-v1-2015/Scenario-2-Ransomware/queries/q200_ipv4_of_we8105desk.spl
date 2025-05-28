@@ -1,0 +1,2 @@
+# Question 200: Most likely IPv4 address of we8105desk
+index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "we8105desk"

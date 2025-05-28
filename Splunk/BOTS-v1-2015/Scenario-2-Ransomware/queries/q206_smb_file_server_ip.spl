@@ -1,0 +1,2 @@
+# Question 206: SMB file server IP address
+index=botsv1 sourcetype="stream:smb"

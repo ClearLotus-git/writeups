@@ -1,0 +1,2 @@
+# Question 201: Suricata signature that alerted the fewest times
+index=botsv1 sourcetype="suricata" "Cerber" | stats count by suricata_signature_id

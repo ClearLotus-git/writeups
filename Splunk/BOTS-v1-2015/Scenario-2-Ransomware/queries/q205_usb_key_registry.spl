@@ -1,0 +1,2 @@
+# Question 205: USB key name from Windows Registry
+index=botsv1 sourcetype="winregistry" key_path="*Windows Portable Devices*"

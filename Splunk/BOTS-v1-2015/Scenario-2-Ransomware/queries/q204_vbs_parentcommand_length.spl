@@ -1,0 +1,4 @@
+# Question 204: Length of VBScript ParentCommandLine
+index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "*.vbs"
+| eval length=len(ParentCommandLine)
+| table ParentCommandLine, length

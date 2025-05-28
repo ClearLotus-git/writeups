@@ -1,0 +1,2 @@
+# Question 211: Obfuscation method used by mhtr.jpg
+index=botsv1 sourcetype="stream:http" "mhtr.jpg"

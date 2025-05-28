@@ -1,0 +1,2 @@
+# Question 203: First suspicious domain visited
+index=botsv1 sourcetype="stream:dns" "192.168.250.100" record_type=A |stats count by "query{}" | sort -_time

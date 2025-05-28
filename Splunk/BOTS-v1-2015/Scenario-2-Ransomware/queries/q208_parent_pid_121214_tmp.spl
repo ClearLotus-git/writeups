@@ -1,0 +1,4 @@
+# Question 208: ParentProcessId of 121214.tmp launch
+index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" "121214.tmp"
+| table _time, host, Image, CommandLine, ParentImage, ParentCommandLine, ProcessId, ParentProcessId, User
+| sort _time

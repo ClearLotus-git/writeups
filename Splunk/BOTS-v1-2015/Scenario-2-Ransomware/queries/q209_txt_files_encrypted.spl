@@ -1,0 +1,2 @@
+# Question 209: Number of encrypted .txt files in Bob Smith's profile
+index=botsv1 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational"  "we8105desk" TargetFilename="C:\\Users\\bob.smith.WAYNECORPINC\\*.txt"
