@@ -16,7 +16,7 @@
 
 ## Question 1
 
-For this room I started with an nmap scan on the attack machine.
+이 방에서는 먼저 attack machine에서 nmap 스캔으로 시작했어요.
 
 ```
 nmap -sC -sV {Machine-IP}
