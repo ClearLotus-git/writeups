@@ -83,7 +83,7 @@ Using information from this file, I was able to log in as ash. Running:
 ```
 su ash
 ```
-Now that i was the ash user i can check privileges using:
+Now that I was the ash user i can check privileges using:
 
 ```
 sudo -lah
