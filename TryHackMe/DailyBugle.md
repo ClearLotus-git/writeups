@@ -1,4 +1,7 @@
-# TryHackMe - Daily Bugle 🕵️‍♂️
+# TryHackMe - Daily Bugle 🕵️‍♂
+
+![dailybuglethm](https://github.com/user-attachments/assets/48b51a86-f1df-4868-9a39-c1f8fd809460)
+
  
 **Room**: [Daily Bugle](https://tryhackme.com/room/dailybugle)  
 **Difficulty**: Medium/hard  
@@ -165,4 +168,4 @@ sudo yum -c $TF/x --enableplugin=y
 # ROOT!
 
 ### Conclusion
-The Daily Bugle room demonstrated how critical vulnerabilities in outdated web applications like Joomla 3.7.0 can lead to full system compromise. Starting with enumeration, we identified Joomla running on the target and used a known SQL Injection (CVE-2017-8917) to extract credentials from the database. Cracking the password hash with john gave us access to the Joomla admin panel, where we leveraged template editing for Remote Code Execution. From there, we escalated our privileges by inspecting the configuration.php file to obtain the MySQL root password, which was reused by a local user. Switching users allowed us to enumerate sudo privileges, revealing that the user jjameson could run yum as root without a password. Using a GTFOBins technique, we exploited the yum plugin system to spawn a root shell.
+The Daily Bugle room highlights the danger of outdated software like Joomla 3.7.0. We found a SQL injection vulnerability (CVE-2017-8917) that exposed credentials, which we cracked with John to access the Joomla admin panel. Using template editing, we achieved RCE and found MySQL root creds in configuration.php. These were reused by a local user, allowing us to switch users. With sudo rights to run yum, we exploited a GTFOBins method to gain root access.
