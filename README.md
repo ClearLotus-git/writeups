@@ -1,4 +1,4 @@
-# CTF Writeups - ClearLotus
+# CTF Writeups 
 
 This is a Capture The Flag (CTF) writeups repository.
 I have done many ctfs but really not great at documenting them.
