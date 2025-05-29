@@ -21,16 +21,15 @@
 ```
 nmap -sC -sV {Machine-IP}
 ```
-Checking the browser console led to a dead-end, showing only a list of Pokémon names. Looking further in the source code, I found another comment above this one:
+browser console 체크했는데 완전 dead-end였어요… 그냥 Pokémon 이름 리스트만 나왔어요. 그래서 source code 좀 더 봤는데, 그 밑에 있던 comment 위에 또 하나 더 있더라고요:
 ```
 <!--check console for extra surprise!)--> 
 ```
-This seemed to be a rabbit hole as it only had a list of pokemon names ;(
-I again looked at the source aand looked above the previous "surprise"
+이건 그냥 rabbit hole 같았어요 ㅠㅠ Pokémon 이름 리스트밖에 없었어요. 그래서 다시 source 봤고, 아까 봤던 "surprise" 코멘트 위쪽도 체크해봤어요.
 
 ![image](https://user-images.githubusercontent.com/71709864/220814080-0b063f36-5633-4bc3-9bdf-a2ab4db83550.png)
 
-I suspected these might be credentials, so I attempted to SSH into the machine using them:
+혹시 이게 credentials일 수도 있겠다 싶어서, SSH로 그 머신에 로그인 시도해봤어요:
 ```
 ssh username@{Machine-IP}
 ```
