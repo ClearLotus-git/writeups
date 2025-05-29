@@ -106,7 +106,10 @@ open user.txt
 
 
 
----------------------->>>> priv escalation need to redo. <<<<<----------------- start here to see about exploit
+
+
+
+# ---------------------->>>> START HERE priv escalation need to redo. <<<<<----------------- start here to see about exploit
 i cant remember how i did it the first time 
 Priv Escalation
 
