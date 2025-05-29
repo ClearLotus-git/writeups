@@ -1,7 +1,8 @@
 # Titanic - Hack The Box Writeup
 
-![Titanic HTB](https://labs.hackthebox.com/storage/avatars/eb5942ec56dd9b6feb06dcf8af8aefc6.png)
-
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/32018b2e-63a5-45e7-a5b7-0dac5f277b4d" alt="Titanic Pwned" width="300"/>
+</p>
 
 
 
