@@ -12,7 +12,7 @@ I'll be using this space to document my process, techniques, and takeaways from 
 - [TryHackMe](https://tryhackme.com/p/ClearLotus) – Top 1% (#1522)
 
 ![image](https://github.com/user-attachments/assets/5296e91d-170d-41d3-b928-6cdc3c694fba)
-![Screenshot 2025-05-28 121836](https://github.com/user-attachments/assets/4657c1f8-482c-49df-a638-4555ab04fa65)
+<img src="https://github.com/user-attachments/assets/4657c1f8-482c-49df-a638-4555ab04fa65" alt="C1earLotus Hack The Box Stats" width="350"/>
 
 ---
 
