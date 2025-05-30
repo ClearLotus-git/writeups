@@ -11,8 +11,9 @@ I'll be using this space to document my process, techniques, and takeaways from 
 - [Hack The Box](https://app.hackthebox.com/profile/1613367) – Top 1% (#863)
 - [TryHackMe](https://tryhackme.com/p/ClearLotus) – Top 1% (#1522)
 
+<img src="https://github.com/user-attachments/assets/28366d39-ef97-4d12-a8ef-74ca3c42c9bf" alt="C1earLotus Hack The Box Stats" width="330"/>
+
 ![image](https://github.com/user-attachments/assets/5296e91d-170d-41d3-b928-6cdc3c694fba)
-<img src="https://github.com/user-attachments/assets/4657c1f8-482c-49df-a638-4555ab04fa65" alt="C1earLotus Hack The Box Stats" width="350"/>
 
 ---
 
