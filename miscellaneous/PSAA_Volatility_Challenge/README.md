@@ -94,5 +94,5 @@ Use windows.registry.printkey or windows.autoruns to inspect persistence keys.
 
 `vol -f /home/lotus/Desktop/volatility_challenge_1./challenge/challenge.vmem windows.registry.printkey --key "Software\\Microsoft\\Windows\\CurrentVersion\\Run" | grep "crss"`
 
-Answer: :>7;O:    (This took me an hour to notice)
+Answer: :>7;O:    (This took me an hour to notice!!!!!!!!!!!)
 
