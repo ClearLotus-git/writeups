@@ -46,7 +46,7 @@ Answer: crss.exe
 Think of common Windows services that malware mimics (e.g., svchost, explorer, etc.).
 
 Answer: csrss.exe
-...
+
 
 ## 5. How many established network connections did the process have active at the time of capture?
 Use windows.netstat or windows.netscan. Filter by the PID of the suspicious process.
