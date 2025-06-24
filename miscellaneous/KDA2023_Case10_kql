@@ -1,0 +1,6 @@
+// 2^31-1 = 0b1111111111111111111111111111111 = 2147483647
+range answer from 0 to 2147483647 step 1
+| where bitset_count_ones(hash_many('kvc_your_cluster_id', tostring(answer))) > 54
+| project answer
+// Stop at first success
+| limit 1
