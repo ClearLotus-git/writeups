@@ -1,5 +1,5 @@
 ## Objective 3 – Linux 101
-**Completed by:** 44.45% of participants
+
 
 ---
 
