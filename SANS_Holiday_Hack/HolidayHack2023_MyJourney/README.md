@@ -2,7 +2,7 @@
 
 This repository contains my fully rewritten solutions for the SANS Holiday Hack Challenge 2023. Each folder corresponds to a specific challenge and includes a markdown file with my approach, results, and key takeaways.
 
-Every write-up is written in my own voice and phrasing, with all technical steps accurately reconstructed from the challenge.
+
 
 ---
 
