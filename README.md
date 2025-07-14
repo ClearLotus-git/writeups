@@ -8,8 +8,8 @@ my earlier days along with some of the recent ones. I'm going to try to update
 this more and add new ones soon.
 I'll be using this space to document my process, techniques, and takeaways from challenges I’ve completed on:
 
-- [Hack The Box](https://app.hackthebox.com/profile/1613367) – Top 1% (#863)
-- [TryHackMe](https://tryhackme.com/p/ClearLotus) – Top 1% (#1522)
+- [Hack The Box](https://app.hackthebox.com/profile/1613367) 
+- [TryHackMe](https://tryhackme.com/p/ClearLotus) 
 
 <img src="https://github.com/user-attachments/assets/28366d39-ef97-4d12-a8ef-74ca3c42c9bf" alt="C1earLotus Hack The Box Stats" width="330"/>
 
