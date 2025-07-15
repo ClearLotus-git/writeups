@@ -1,5 +1,4 @@
 # OBJECTIVE 14 - Phish Detection Agency  
-_Completed by 8.01% of challenge participants_
 
 ## OBJECTIVE  
 Help Fitzy Shortstack on Film Noir Island investigate a suspicious inbox and identify phishing emails by analyzing their headers.
