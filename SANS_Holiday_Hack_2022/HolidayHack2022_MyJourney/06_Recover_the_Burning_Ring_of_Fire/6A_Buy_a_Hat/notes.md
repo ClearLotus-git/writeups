@@ -1,0 +1,3 @@
+# 06 Recover the Burning Ring of Fire/6A Buy a Hat
+
+Notes go here...

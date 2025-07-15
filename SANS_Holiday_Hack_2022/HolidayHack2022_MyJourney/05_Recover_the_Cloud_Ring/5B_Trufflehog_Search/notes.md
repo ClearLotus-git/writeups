@@ -1,0 +1,3 @@
+# 05 Recover the Cloud Ring/5B Trufflehog Search
+
+Notes go here...

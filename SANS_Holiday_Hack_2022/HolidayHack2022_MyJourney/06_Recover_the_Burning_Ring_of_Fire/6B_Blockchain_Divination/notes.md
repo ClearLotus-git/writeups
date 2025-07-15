@@ -1,0 +1,3 @@
+# 06 Recover the Burning Ring of Fire/6B Blockchain Divination
+
+Notes go here...
