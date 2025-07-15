@@ -11,7 +11,7 @@ This repository contains my fully rewritten solutions for the SANS Holiday Hack 
 
 ## Challenge Index
 
-- [00 Orientation](./00_Orientation/)
+- [00 Orientation](SANS_Holiday_Hack/HolidayHack2023_MyJourney/00_Orientation/notes.md)
 - [01 Snowball Fight](./01_Snowball_Fight/notes.md)
 - [02 Linux 101](./02_Linux_101/notes.md)
 - [03 Reportinator](./03_Reportinator/notes.md)
