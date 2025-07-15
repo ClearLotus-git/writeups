@@ -1,12 +1,61 @@
-# 19 Space Island Door Access
+# OBJECTIVE 20 - Space Island Door Speaker  
 
-**Challenge:** [Brief summary of the challenge.]
 
-**Steps I Took:**
-- Step 1
-- Step 2
-- Step 3
+## OBJECTIVE  
+There's a door that needs opening on Space Island! Talk to Jewel Loggins there for more information.
 
-**Result:** [Outcome after completing the challenge.]
+## Hints
 
-**Lesson Learned:** [Key takeaway or what I found interesting.]
+The Access Speaker is programmed to only accept Wombley's voice. Maybe you could get a sample of his voice and use an AI tool to simulate Wombley speaking the passphrase.
+</details>
+
+---
+
+## My Approach
+
+To unlock the door on Space Island, I needed to **speak a known passphrase using Wombley’s voice**. This involved a combination of OSINT (gathering audio samples) and AI-based voice synthesis.
+
+---
+
+### Step 1: Gather Required Materials
+
+From **Objective 19**, I already had the passphrase:
+
+```
+And he whispered, 'Now I shall be out of sight;
+So through the valley and over the height.'
+And he'll silently take his way.
+```
+
+From **Objective 16**, I had access to Wombley’s voice sample:  
+ `wombleycube_the_enchanted_voyage.mp3`
+
+---
+
+### Step 2: Use AI Voice Cloning Tools
+
+I tested one voice cloning platform:
+
+- [**PlayHT**](https://play.ht/)
+
+The tool allowed me to:
+1. Upload the sample audio of Wombley
+2. Input the passphrase text
+3. Generate a synthesized `.wav` file of Wombley speaking the passphrase
+
+---
+
+### Step 3: Play Back the Synthesized Voice
+
+After generating the `.wav` file, I returned to the door interface and played the audio file using my system’s microphone input.
+
+The door recognized Wombley’s synthesized voice and granted access to the restricted area.
+
+
+---
+
+## Lessons Learned
+
+AI voice cloning using real user sample be a real pain.
+  
+ 
