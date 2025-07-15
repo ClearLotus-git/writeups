@@ -5,7 +5,7 @@
 ## OBJECTIVE
 Help Garland Candlesticks on the Island of Misfit Toys get back into his luggage by finding the correct position for all four dials.
 
-## HINTS
+## Hints
 
 Hints provided for Objective 6
     Chris Elgee's [talk](https://www.youtube.com/watch?v=ycM1hBSEyog) regarding his and his wife's luggage. 
