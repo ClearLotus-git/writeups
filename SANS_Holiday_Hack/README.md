@@ -8,6 +8,9 @@ This repository contains my solutions for the SANS Holiday Hack Challenge 2023. 
 
 
 ---
+<p align="center">
+  <img width="262" height="454" alt="image" src="https://github.com/user-attachments/assets/fa1dcc37-3b5d-46d7-9b07-a0b857e3a4f6" />
+</p>
 
 
 ## Challenge Index
