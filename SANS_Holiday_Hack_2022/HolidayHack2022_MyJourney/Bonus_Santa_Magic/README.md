@@ -1,6 +1,12 @@
-# The Ending
+##  The Grand Finale
 
-I saw that the rings have defrosted Santa’s tower and I can now go inside.
-Enter the castle and talk to Santa to finish the long quest! 
+After collecting all the enchanted rings, I made my way back above ground to discover that the icy barrier around Santa’s tower had finally thawed. The entrance to his castle was now wide open, shining with holiday magic.
 
-<img width="332" height="291" alt="image" src="https://github.com/user-attachments/assets/a127b482-625d-4ed7-b2af-057fd93b4105" />
+I was greeted by JPMinty and Santa himself, both excited to see the mission completed. Stepping inside the castle felt like the perfect reward—every challenge solved, every puzzle conquered, all leading to this festive finale.
+
+Inside the cozy grand hall, I reconnected with fellow characters from the journey. Santa expressed his gratitude and confirmed what we already knew: the holidays had been saved! The 2022 KringleCon experience wrapped up with celebration, community, and plenty of cybersecurity spirit.
+
+
+<p align="center">
+  <img width="332" height="291" alt="image" src="https://github.com/user-attachments/assets/a127b482-625d-4ed7-b2af-057fd93b4105" />
+</p>
