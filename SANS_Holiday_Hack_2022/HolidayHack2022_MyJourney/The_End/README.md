@@ -19,3 +19,12 @@ This wasn’t just a CTF.. it was a story-driven, gamified way to learn and impr
 ###  Thank You
 
 A huge thank you to the SANS Holiday Hack team for building such a high-quality event year after year. Your dedication to community learning, creativity, and holiday cheer never goes unnoticed. See you at the next KringleCon!
+
+
+<p align="center">
+  <img width="209" height="128" alt="image" src="https://github.com/user-attachments/assets/1ad97b8e-e491-4308-88cb-9359e4ed90ca" />
+</p>
+
+<p align="center">
+  <img width="200" height="250" alt="image" src="https://github.com/user-attachments/assets/c5c48996-992f-4821-9839-caf65159f3df" />
+</p>
