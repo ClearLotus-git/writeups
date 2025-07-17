@@ -1,4 +1,4 @@
-# Finale
+# The Ending
 
 We see that the rings have defrosted Santa’s tower and we now go inside.
 Enter the castle and talk to Santa to finish the long quest! 
