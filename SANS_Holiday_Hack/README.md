@@ -4,7 +4,7 @@
 # Holiday Hack Challenge 2023 – A Holiday Odyssey - My Journey
 
 This repository contains my solutions for the SANS Holiday Hack Challenge 2023. Each folder corresponds to a specific challenge and includes a markdown file with what I did to solve the challenge.
-This year we went to an island for Christmas and I had so much fun! Thank you to SANS for putting on another awesome event!
+This year, we went to an island for Christmas and I had so much fun! Thank you to SANS for putting on another awesome event!
 
 
 
