@@ -40,5 +40,7 @@ This year, we went to an island for Christmas and I had so much fun! Thank you t
 - [21 Missile Diversion](HolidayHack2023_MyJourney/21_Missile_Diversion/notes.md)
 - [22 Fishing Guide](HolidayHack2023_MyJourney/22_Fishing_Guide/notes.md)
 - [23 Fishing Mastery](HolidayHack2023_MyJourney/23_Fishing_Mastery/notes.md)
+- [24 The End](HolidayHack2023_MyJourney/24_The_End/notes.md)
+
 
 
