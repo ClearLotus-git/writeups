@@ -1,54 +1,96 @@
-# OBJECTIVE 3 - Recover the Tolkien Ring: Windows Event Logs  
+# Recover the Tolkien Ring: Windows Event Logs  
+**SANS Holiday Hack Challenge 2022 – KringleCon V: Golden Rings**  
 **Difficulty:** 🎄🎄
 
----
-
-## Challenge  
-Analyze a PowerShell event log from a Windows system to identify malicious activity. Use event log analysis tools to uncover suspicious behavior, data manipulation, and potential compromise.
+## Overview  
+This challenge focused on analyzing a PowerShell event log file (`powershell.evtx`) to investigate suspicious attacker behavior, identify file manipulation, and confirm whether a secret was compromised. The logs were converted into a human-readable format using the `evtx_dump.py` tool from the `python-evtx` package.
 
 ---
 
-## Steps I Took  
+## Analysis Summary
 
-**Step 1:**  
-Accessed the Windows Event Logs terminal in the Tolkien Ring and downloaded the `powershell.evtx` file. Converted the log into a readable format using `evtx_dump.py`, resulting in `powershell.evtx.dump`.
+###  Date of Attack  
+The majority of PowerShell activity occurred on **December 24, 2022**.  
+This was determined by counting the number of log entries per day:
 
-**Step 2:**  
-Identified the primary date of malicious activity by counting PowerShell log events per day. Determined the attack occurred on `12/24/2022`.
-
-**Step 3:**  
-Searched for commands referencing secrets. Discovered the attacker accessed `recipe_updated.txt` using PowerShell’s `Get-Content` command.
-
-**Step 4:**  
-Found the last command that retrieved and altered file contents, storing them in a variable. The final relevant command was:  
-`$foo = Get-Content .\Recipe| % {{$_ -replace 'honey', 'fish oil'}}`
-
-**Step 5:**  
-Identified the last command that wrote the altered content to a file:  
-`$foo | Add-Content -Path 'Recipe'`
-
-**Step 6:**  
-Verified that the most commonly targeted file for write actions was `Recipe.txt`.
-
-**Step 7:**  
-Searched for deletion commands and confirmed that files were deleted.  
-Two entries found:  
-- `del .\Recipe.txt`  
-- `del .\recipe_updated.txt`
-
-**Step 8:**  
-Confirmed that the original file `recipe_updated.txt` was not deleted.
-
-**Step 9:**  
-Identified the event ID that captures executed PowerShell commands as `4104`.
-
-**Step 10:**  
-Verified that the secret ingredient in the original recipe was compromised via content substitution.
-
-**Step 11:**  
-Confirmed the original secret ingredient was `Honey`.
+```bash
+for i in $(grep "TimeCreated" powershell.evtx.dump | cut -d '"' -f 2 | cut -d " " -f 1 | sort | uniq); do 
+  a=$(grep "$i" powershell.evtx.dump | wc -l) 
+  echo -e "$a\t$i" 
+done | sort -rn
+```
 
 ---
+
+###  Compromised File  
+The attacker accessed a file named `recipe_updated.txt`, which contained sensitive data. Multiple commands used `Get-Content` to extract information from this file.
+
+---
+
+###  Variable Assignment & Data Manipulation  
+The attacker modified the contents of another file, `Recipe`, and stored the results in a variable named `$foo`.  
+The last full PowerShell line used for this operation was:
+
+```powershell
+$foo = Get-Content .\Recipe| % {$_ -replace 'honey', 'fish oil'}
+```
+
+---
+
+###  File Write Operation  
+The modified contents stored in `$foo` were written back to a file using:
+
+```powershell
+$foo | Add-Content -Path 'Recipe'
+```
+
+This command was run multiple times, indicating repeated attempts to overwrite or append to the file.
+
+---
+
+###  File Activity Frequency  
+From reviewing the logs, the file **Recipe.txt** appeared most frequently in write operations, suggesting it was the main target for the attacker’s modifications.
+
+---
+
+###  File Deletion Evidence  
+Two deletion commands were observed:
+
+```powershell
+del .\Recipe.txt
+del .\recipe_updated.txt
+```
+
+Both files were deleted at some point in the timeline.
+
+---
+
+###  Was the Original File Deleted?  
+Despite being accessed and manipulated, the original file (`recipe_updated.txt`) was **not** deleted.
+
+---
+
+###  Event ID Used  
+PowerShell commands and script blocks were logged under **Event ID 4104**, which is known for capturing PowerShell execution details.
+
+---
+
+###  Was the Secret Ingredient Compromised?  
+Yes. The command below shows that the attacker replaced the word “honey” with “fish oil”:
+
+```powershell
+$foo = Get-Content .\Recipe| % {$_ -replace 'honey', 'fish oil'} $foo | Add-Content -Path 'recipe_updated.txt'
+```
+
+---
+
+###  What Was the Secret Ingredient?  
+The original secret ingredient was **Honey**.
+
+---
+
+## Conclusion  
+Through log parsing and analysis, I was able to reconstruct the attacker’s actions: extracting data from `recipe_updated.txt`, altering `Recipe.txt`, and attempting to conceal the tampering by replacing key ingredients. The use of Event ID 4104 was instrumental in capturing these script executions and confirming that the secret was indeed compromised.
 
 ## Result  
 Successfully parsed the PowerShell event logs to determine the timeline, commands used, and impacted files. Verified the compromise of the secret ingredient and identified malicious activity through Event ID 4104. Completed the Windows Event Logs challenge.
