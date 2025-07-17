@@ -1,7 +1,7 @@
 
 ![4d4562af-6c72-48c6-836a-06e7f620f014](https://github.com/user-attachments/assets/f17fb04e-3fcd-4312-9551-ec1f9f9b9ee8)
 
-# Holiday Hack Challenge 2023 – My Journey
+# Holiday Hack Challenge 2023 – A Holiday Odyssey - My Journey
 
 This repository contains my solutions for the SANS Holiday Hack Challenge 2023. Each folder corresponds to a specific challenge and includes a markdown file with what I did to solve the challenge.
 
