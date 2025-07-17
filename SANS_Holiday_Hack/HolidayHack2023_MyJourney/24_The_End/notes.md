@@ -11,3 +11,5 @@ What stood out most was how the event balanced hands-on learning with story-driv
 ###  Thank You, SANS
 
 Thank you to the **SANS team** for putting together another solid Holiday Hack Challenge. The effort behind the scenes really shows, and I appreciate the opportunity to take part in something this thoughtfully built.
+
+<img width="1200" height="680" alt="image" src="https://github.com/user-attachments/assets/c2311696-dc5b-46c2-a4fb-62840fbccf7a" />
