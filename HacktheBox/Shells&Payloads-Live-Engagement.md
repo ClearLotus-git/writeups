@@ -9,7 +9,7 @@ Connect to the foothold using:
 `sudo nmap 172.16.1.11 -A`  
 <img width="1251" height="375" alt="2" src="https://github.com/user-attachments/assets/6d226117-b008-4d91-9a81-de48638693e5" />
 
-2. Exploit the target and gain a shell session. Submit the name of the folder located in C:\Shares\
+2. Exploit the target and gain a shell session. Submit the name of the folder located in C:\Shares\ .
 
 <img width="1272" height="296" alt="3" src="https://github.com/user-attachments/assets/bb02d872-a0dc-4279-9b5b-0e9cd24e5289" />
 <img width="1274" height="661" alt="4" src="https://github.com/user-attachments/assets/ff3ec699-5e2a-418f-ab6d-01ea1b62fed7" />
@@ -40,7 +40,7 @@ Connect to the foothold using:
 `sudo nmap 172.16.1.13`
 <img width="951" height="500" alt="image" src="https://github.com/user-attachments/assets/00388a85-9609-4b38-badf-81b04653a76b" />
 
-7. Exploit and gain a shell session with Host-3. Submit the contents of C:\Users\Administrator\Desktop\Skills-flag.txt
+7. Exploit and gain a shell session with Host-3. Submit the contents of C:\Users\Administrator\Desktop\Skills-flag.txt .
 
 `msfconsole`
 `search eternal`
