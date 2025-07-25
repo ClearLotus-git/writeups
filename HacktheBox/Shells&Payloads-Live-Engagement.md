@@ -4,7 +4,7 @@
 Connect to the foothold using:
    `xfreerdp /v:<target IP> /u:htb-student /p:HTB_@cademy_stdnt!`
 
-1. Finding the hostnamer of Host-1
+1. Finding the hostnamer of Host-1 .
 
 `sudo nmap 172.16.1.11 -A`  
 <img width="1251" height="375" alt="2" src="https://github.com/user-attachments/assets/6d226117-b008-4d91-9a81-de48638693e5" />
