@@ -18,7 +18,7 @@ Connect to the foothold using:
 <img width="1226" height="465" alt="7" src="https://github.com/user-attachments/assets/c3fd29fc-d46e-46db-85d4-a7593b3b1e8a" />
 <img width="919" height="569" alt="image" src="https://github.com/user-attachments/assets/1fea7a0d-c3d6-47af-a21b-916103514006" />
 
-3.What distribution of Linux is running on Host-2?
+3. What distribution of Linux is running on Host-2?
 
 <img width="1008" height="248" alt="9" src="https://github.com/user-attachments/assets/36e12449-0148-429b-ae87-9cb2e58f4e82" />
 
@@ -40,7 +40,7 @@ Connect to the foothold using:
 `sudo nmap 172.16.1.13`
 <img width="951" height="500" alt="image" src="https://github.com/user-attachments/assets/00388a85-9609-4b38-badf-81b04653a76b" />
 
-7.Exploit and gain a shell session with Host-3. Submit the contents of C:\Users\Administrator\Desktop\Skills-flag.txt
+7. Exploit and gain a shell session with Host-3. Submit the contents of C:\Users\Administrator\Desktop\Skills-flag.txt
 
 `msfconsole`
 `search eternal`
