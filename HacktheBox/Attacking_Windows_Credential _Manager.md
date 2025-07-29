@@ -64,6 +64,7 @@ From the RDP session:
 3. The **"Launch"** button was clicked, which opened a high-integrity (Administrator) command prompt.
 
 <img width="710" height="490" alt="image" src="https://github.com/user-attachments/assets/d653fee1-9d4e-405a-8a3e-80991fd3882e" />
+
 This provided an **elevated shell** without triggering a UAC prompt, allowing `mimikatz.exe` to be executed with full privileges.
 
 ## Credential Extraction (LSASS Dump)
