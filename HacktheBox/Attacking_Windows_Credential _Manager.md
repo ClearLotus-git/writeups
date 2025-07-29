@@ -75,7 +75,8 @@ The following commands were run to execute and find credentials within Mimikatz:
 
 <img width="883" height="607" alt="image" src="https://github.com/user-attachments/assets/a5b916c9-88a0-4df3-8541-f93c9acf8863" />
 
-<img width="746" height="372" alt="image" src="https://github.com/user-attachments/assets/c1dae0da-1c7c-47cd-8db8-9b777db70f17" />
+<img width="729" height="378" alt="image" src="https://github.com/user-attachments/assets/7b2655c1-80b0-404a-8e1e-96e54b244649" />
+
 
 <img width="945" height="115" alt="image" src="https://github.com/user-attachments/assets/827f039c-8305-4be9-b34a-16a473942803" />
 
