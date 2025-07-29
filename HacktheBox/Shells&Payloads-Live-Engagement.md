@@ -25,7 +25,7 @@ Connect to the foothold using:
 4. Find the language the shell is written in that gets uploaded using the 50064.rb exploit.
 
 <img width="1012" height="180" alt="10" src="https://github.com/user-attachments/assets/1957f82b-cb07-47fc-95b8-dad10192f753" />
-<img width="1281" height="709" alt="11" src="https://github.com/user-attachments/assets/c36586cf-a41d-41e8-bae8-176cec462a1f" />
+<img width="1279" height="657" alt="image" src="https://github.com/user-attachments/assets/bb0a16a8-5af3-4d70-9ad6-71aa6e154151" />
 <img width="1263" height="632" alt="12" src="https://github.com/user-attachments/assets/3fbae294-565a-4339-8d25-6e66b7c785b6" />
 
 5. Exploit the blog site and establish a shell session with the target OS. What are the contents of /customscripts/flag.txt?
