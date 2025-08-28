@@ -8,13 +8,26 @@ my earlier days along with some of the recent ones. I'm going to try to update
 this more and add new ones soon.
 I'll be using this space to document my process, techniques, and takeaways from challenges I’ve completed on:
 
-## Writeups Index
+# CTF / Challenge Writeups
 
-- [HackTheBox](HacktheBox/README.md)
-- [TryHackMe](TryHackMe/English.md)
-- [SANS Holiday Hack 2022](SANS_Holiday_Hack_2022/README.md)
-- [Splunk BOTS v1 – Scenario 2](Splunk/BOTS-v1-2015/Scenario-2-Ransomware/README.md)
-- [Miscellaneous](miscellaneous/KDA2023_Case10_kql.md)
+Welcome! Quick index to my writeups. (Pages builds can take ~1 min—hard refresh if you just updated.)
+
+## Hack The Box
+- [Password Attacks Lab (CPTS)](HacktheBox/Password-Attacks-Lab-CPTS.md)
+
+## TryHackMe
+- [English](TryHackMe/English.md)
+
+## SANS Holiday Hack
+- [General Notes](SANS_Holiday_Hack/README.md)
+- [2022 Writeups](SANS_Holiday_Hack_2022/README.md)
+
+## Splunk BOTS
+- [BOTS v1 – Scenario 2: Ransomware](Splunk/BOTS-v1-2015/Scenario-2-Ransomware/README.md)  <!-- create this README.md if it doesn't exist -->
+
+## Misc
+- [KDA 2023 – Case 10 (KQL)](miscellaneous/KDA2023_Case10_kql.md)
+
 
 
 
