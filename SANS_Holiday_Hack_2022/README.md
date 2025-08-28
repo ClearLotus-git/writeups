@@ -29,6 +29,7 @@ This writeup is a solutions-style walkthrough of my experience completing the ev
 ## 🧭 My Journey
 
 - [KringleCon Orientation](HolidayHack2022_MyJourney/01_KringleCon_Orientation/README.md)
+
 - [Recover the Tolkien Ring](HolidayHack2022_MyJourney/02_Recover_the_Tolkien_Ring/README.md)
 - [Recover the Elfen Ring](HolidayHack2022_MyJourney/03_Recover_the_Elfen_Ring/README.md)
 - [Recover the Web Ring](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/README.md)
