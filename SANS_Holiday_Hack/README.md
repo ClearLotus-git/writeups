@@ -18,7 +18,6 @@ This year, we went to an island for Christmas and I had so much fun! Thank you t
 
 <div align="center">
 
-## Challenge Index
 
 - [00 Orientation](SANS_Holiday_Hack/HolidayHack2023_MyJourney/00_Orientation/notes.md)
 - [01 Snowball Fight](SANS_Holiday_Hack/HolidayHack2023_MyJourney/01_Snowball_Fight/notes.md)
