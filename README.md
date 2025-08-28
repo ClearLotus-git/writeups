@@ -10,7 +10,7 @@ I'll be using this space to document my process, techniques, and takeaways from 
 
 # CTF / Challenge Writeups
 
-Welcome! Quick index to my writeups. (Pages builds can take ~1 min—hard refresh if you just updated.)
+Welcome! 
 
 ## Hack The Box
 - [Password Attacks Lab (CPTS)](HacktheBox/Password-Attacks-Lab-CPTS.md)
