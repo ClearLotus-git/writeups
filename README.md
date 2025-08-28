@@ -12,21 +12,37 @@ I'll be using this space to document my process, techniques, and takeaways from 
 
 Welcome! 
 
-## Hack The Box
-- [Password Attacks Lab (CPTS)](HacktheBox/Password-Attacks-Lab-CPTS.md)
+# Hack The Box Writeups
 
-## TryHackMe
-- [English](TryHackMe/English.md)
+Welcome to my HackTheBox retired machine & challenge writeups.
 
-## SANS Holiday Hack
-- [General Notes](SANS_Holiday_Hack/README.md)
-- [2022 Writeups](SANS_Holiday_Hack_2022/README.md)
+## Machines
+- [Attacking Windows Credential Manager](Attacking_Windows_Credential_Manager.md)
+- [Backfire](Backfire.md)
+- [Password Attacks Lab (CPTS)](Password-Attacks-Lab-CPTS.md)
+- [Shells & Payloads Live Engagement](Shells&Payloads-Live-Engagement.md)
+- [Titanic](Titanic.md)
 
-## Splunk BOTS
-- [BOTS v1 – Scenario 2: Ransomware](Splunk/BOTS-v1-2015/Scenario-2-Ransomware/README.md)  <!-- create this README.md if it doesn't exist -->
+# TryHackMe Writeups
 
-## Misc
-- [KDA 2023 – Case 10 (KQL)](miscellaneous/KDA2023_Case10_kql.md)
+## Rooms
+- [Gotta Catch em All](Gotta_Catch_em_All/README.md)
+- [Gotta Catch em All (Korean)](Gotta_Catch_em_All_kr/README.md)
+- [Relevant](Relevant/README.md)
+- [Tech Supp0rt](Tech_Supp0rt/README.md)
+- [Daily Bugle](DailyBugle.md)
+
+# CTF / Challenge Writeups
+
+## Platforms
+
+- [Hack The Box](HacktheBox/README.md)
+- [TryHackMe](TryHackMe/README.md)
+- [SANS Holiday Hack](SANS_Holiday_Hack/README.md)
+- [SANS Holiday Hack 2022](SANS_Holiday_Hack_2022/README.md)
+- [Splunk BOTS](Splunk/BOTS-v1-2015/Scenario-2-Ransomware/README.md)
+- [Miscellaneous](miscellaneous/README.md)
+
 
 
 
