@@ -8,42 +8,6 @@ my earlier days along with some of the recent ones. I'm going to try to update
 this more and add new ones soon.
 I'll be using this space to document my process, techniques, and takeaways from challenges I’ve completed on:
 
-# CTF / Challenge Writeups
-
-Welcome! 
-
-# Hack The Box Writeups
-
-Welcome to my HackTheBox retired machine & challenge writeups.
-
-## Machines & Labs
-
-- [Attacking Windows Credential Manager](Attacking_Windows_Credential_Manager.md)
-- [Backfire](Backfire.md)
-- [Password Attacks Lab (CPTS)](Password-Attacks-Lab-CPTS.md)
-- [Shells & Payloads Live Engagement](Shells&Payloads-Live-Engagement.md)
-- [Titanic](Titanic.md)
-
-# TryHackMe Writeups
-
-## Rooms
-- [Gotta Catch em All](Gotta_Catch_em_All/README.md)
-- [Gotta Catch em All (Korean)](Gotta_Catch_em_All_kr/README.md)
-- [Relevant](Relevant/README.md)
-- [Tech Supp0rt](Tech_Supp0rt/README.md)
-- [Daily Bugle](DailyBugle.md)
-
-# CTF / Challenge Writeups
-
-## Platforms
-
-- [Hack The Box](HacktheBox/README.md)
-- [TryHackMe](TryHackMe/README.md)
-- [SANS Holiday Hack](SANS_Holiday_Hack/README.md)
-- [SANS Holiday Hack 2022](SANS_Holiday_Hack_2022/README.md)
-- [Splunk BOTS](Splunk/BOTS-v1-2015/Scenario-2-Ransomware/README.md)
-- [Miscellaneous](miscellaneous/README.md)
-
 
 
 
