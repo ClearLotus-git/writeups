@@ -1,8 +1,5 @@
 # CTF / Challenge Writeups
 
-- [Hack The Box](HackTheBox/README.md)
-+ [Hack The Box](HacktheBox/readme.md)
-
 
 
 
