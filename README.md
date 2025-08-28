@@ -16,7 +16,8 @@ Welcome!
 
 Welcome to my HackTheBox retired machine & challenge writeups.
 
-## Machines
+## Machines & Labs
+
 - [Attacking Windows Credential Manager](Attacking_Windows_Credential_Manager.md)
 - [Backfire](Backfire.md)
 - [Password Attacks Lab (CPTS)](Password-Attacks-Lab-CPTS.md)
