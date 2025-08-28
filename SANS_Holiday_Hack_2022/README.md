@@ -28,6 +28,7 @@ This writeup is a solutions-style walkthrough of my experience completing the ev
 
 ## 🧭 My Journey
 
+### 01 - KringleCon Orientation
 - [KringleCon Orientation](HolidayHack2022_MyJourney/01_KringleCon_Orientation/README.md)
 
 ### 02 — Recover the Tolkien Ring
@@ -61,5 +62,5 @@ This writeup is a solutions-style walkthrough of my experience completing the ev
 - [Bonus — Santa Magic](HolidayHack2022_MyJourney/Bonus_Santa_Magic/README.md)
 
 ### 🎉 The End
-- [Closing Challenge](HolidayHack2022_MyJourney/The_End/README.md)
+- [Final Words](HolidayHack2022_MyJourney/The_End/README.md)
 
