@@ -30,10 +30,36 @@ This writeup is a solutions-style walkthrough of my experience completing the ev
 
 - [KringleCon Orientation](HolidayHack2022_MyJourney/01_KringleCon_Orientation/README.md)
 
-- [Recover the Tolkien Ring](HolidayHack2022_MyJourney/02_Recover_the_Tolkien_Ring/README.md)
-- [Recover the Elfen Ring](HolidayHack2022_MyJourney/03_Recover_the_Elfen_Ring/README.md)
-- [Recover the Web Ring](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/README.md)
-- [Recover the Cloud Ring](HolidayHack2022_MyJourney/05_Recover_the_Cloud_Ring/README.md)
-- [Recover the Burning Ring of Fire](HolidayHack2022_MyJourney/06_Recover_the_Burning_Ring_of_Fire/README.md)
-- [Bonus: Santa Magic](HolidayHack2022_MyJourney/Bonus_Santa_Magic/README.md)
-- [The End](HolidayHack2022_MyJourney/The_End/README.md)
+### 02 — Recover the Tolkien Ring
+- [2A — Wireshark Practice](HolidayHack2022_MyJourney/02_Recover_the_Tolkien_Ring/2A_Wireshark_Practice/README.md)
+- [2B — Windows Event Logs](HolidayHack2022_MyJourney/02_Recover_the_Tolkien_Ring/2B_Windows_Event_Logs/README.md)
+- [2C — Suricata Regatta](HolidayHack2022_MyJourney/02_Recover_the_Tolkien_Ring/2C_Suricata_Regatta/README.md)
+
+### 03 — Recover the Elfen Ring
+- [3A — Clone with a Difference](HolidayHack2022_MyJourney/03_Recover_the_Elfen_Ring/3A_Clone_with_a_Difference/README.md)
+- [3B — Prison Escape](HolidayHack2022_MyJourney/03_Recover_the_Elfen_Ring/3B_Prison_Escape/README.md)
+
+### 04 — Recover the Web Ring
+- [4A — Naughty IP](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/4A_Naughty_IP/README.md)
+- [4B — Credential Mining](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/4B_Credential_Mining/README.md)
+- [4C — 404 FTW](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/4C_404_FTW/README.md)
+- [4D — IMDS XXE and Other Abuses](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/4D_IMDS_XXE_and_Other_Ab.../README.md)
+- [4E — Open Boria Mine Door](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/4E_Open_Boria_Mine_Door/README.md)
+- [4F — Glamtariel’s Fountain](HolidayHack2022_MyJourney/04_Recover_the_Web_Ring/4F_Glamtariel's_Fountain/README.md)
+
+### 05 — Recover the Cloud Ring
+- [5A — AWS CLI Intro](HolidayHack2022_MyJourney/05_Recover_the_Cloud_Ring/5A_AWS_CLI_Intro/README.md)
+- [5B — Trufflehog Search](HolidayHack2022_MyJourney/05_Recover_the_Cloud_Ring/5B_Trufflehog_Search/README.md)
+- [5C — Exploitation via AWS CLI](HolidayHack2022_MyJourney/05_Recover_the_Cloud_Ring/5C_Exploitation_via_AWS_CLI/README.md)
+
+
+### 06 — Recover the Burning Ring of Fire
+- [6A — Buy a Hat](HolidayHack2022_MyJourney/06_Recover_the_Burning_Ring_of_Fire/6A_Buy_a_Hat/README.md)
+- [6B — Blockchain Divination](HolidayHack2022_MyJourney/06_Recover_the_Burning_Ring_of_Fire/6B_Blockchain_Divination/README.md)
+
+### 🎁 Bonus Challenge
+- [Bonus — Santa Magic](HolidayHack2022_MyJourney/Bonus_Santa_Magic/README.md)
+
+### 🎉 The End
+- [Closing Challenge](HolidayHack2022_MyJourney/The_End/README.md)
+
