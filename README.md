@@ -8,8 +8,14 @@ my earlier days along with some of the recent ones. I'm going to try to update
 this more and add new ones soon.
 I'll be using this space to document my process, techniques, and takeaways from challenges I’ve completed on:
 
-- [Hack The Box](https://app.hackthebox.com/profile/1613367) 
-- [TryHackMe](https://tryhackme.com/p/ClearLotus) 
+## Writeups Index
+
+- [HackTheBox](HacktheBox/README.md)
+- [TryHackMe](TryHackMe/English.md)
+- [SANS Holiday Hack 2022](SANS_Holiday_Hack_2022/README.md)
+- [Splunk BOTS v1 – Scenario 2](Splunk/BOTS-v1-2015/Scenario-2-Ransomware/README.md)
+- [Miscellaneous](miscellaneous/KDA2023_Case10_kql.md)
+
 
 
 <img width="320" height="100" alt="image" src="https://github.com/user-attachments/assets/add2e798-4cdd-40ee-a02d-9710613a8531" />
