@@ -2,7 +2,7 @@
 
 
 - [Hack The Box](HacktheBox/readme.md)
-- [TryHackMe](TryHackMe/README.md)
+- [TryHackMe](TryHackMe/readme.md)
 - [SANS Holiday Hack](SANS_Holiday_Hack/README.md)
 - [SANS Holiday Hack 2022](SANS_Holiday_Hack_2022/README.md)
 - [Splunk BOTS](Splunk/BOTS-v1-2015/Scenario-2-Ransomware/README.md)
