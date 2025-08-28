@@ -26,7 +26,7 @@ This writeup is a solutions-style walkthrough of my experience completing the ev
 
 ---
 
-## 🧭 My Journey
+## My Journey
 
 ### 01 - KringleCon Orientation
 - [KringleCon Orientation](HolidayHack2022_MyJourney/01_KringleCon_Orientation/README.md)
@@ -61,6 +61,6 @@ This writeup is a solutions-style walkthrough of my experience completing the ev
 ### 🎁 Bonus Challenge
 - [Bonus — Santa Magic](HolidayHack2022_MyJourney/Bonus_Santa_Magic/README.md)
 
-### 🎉 The End
+### The End
 - [Final Words](HolidayHack2022_MyJourney/The_End/README.md)
 
