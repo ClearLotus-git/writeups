@@ -7,8 +7,6 @@ Click any title to view the full writeup.
 
 ## Machines & Labs
 
-## Machines & Labs
-
 - [Attacking Windows Credential Manager](Attacking_Windows_Credential%20_Manager.md)
 - [Backfire](Backfire.md)
 - [Password Attacks Lab (CPTS)](Password-Attacks-Lab-CPTS.md)
