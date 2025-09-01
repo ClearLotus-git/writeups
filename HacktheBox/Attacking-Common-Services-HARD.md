@@ -211,7 +211,7 @@ SMB         10.129.203.10   445    WIN-HARD         [-] WIN-HARD\fiona:kAkd03SA@
 SMB         10.129.203.10   445    WIN-HARD         [+] WIN-HARD\fiona:48Ns72!bns74@S84NNNSl   <-----------------
 ```
 
-There is the user: Fiona and the password: 48Ns72!bns74@S84NNNSl
+There is the user: fiona and the password: 48Ns72!bns74@S84NNNSl
 
 Using the attained credentials, connect to spawned target using xfreerdp and then open PowerShell: 
 
