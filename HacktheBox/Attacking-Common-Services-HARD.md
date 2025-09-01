@@ -1,6 +1,6 @@
 # Attacking Common Services - Hard
 
-This writeup is for the CPTS path of HTB. The third server is another internal server used to manage files and working material, such as forms. In addition, a database is used on the server, the purpose of which we do not know. 
+This writeup is part of the CPTS path of HTB. The third server is another internal server used to manage files and working material, such as forms. In addition, a database is used on the server, the purpose of which we do not know. 
 The following questions need to be answered:
 
 
