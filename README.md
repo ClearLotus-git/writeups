@@ -5,7 +5,9 @@ I have done many ctfs but really not great at documenting them.
 Usually it involves notepad while jotting down only notes I'd understand :D
 There aren't many writeups on here now.. just a couple that i could find from
 my earlier days along with some of the recent ones. I'm going to try to update 
-this more and add new ones soon.
+this more and add new ones soon. There are no official professional writeups on 
+here as they are confidential. Here you will find tutorial writeup formats for the
+challenges.
 I'll be using this space to document my process, techniques, and takeaways from challenges I’ve completed on:
 
 
