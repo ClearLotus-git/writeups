@@ -1,4 +1,4 @@
-# Active Directory Lab I
+# Active Directory Lab 
 
 ## Introduction
 
