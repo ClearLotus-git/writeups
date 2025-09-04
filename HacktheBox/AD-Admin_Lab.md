@@ -311,7 +311,14 @@ CN              CanonicalName                                                   
 ACADEMY-IAD-W10 INLANEFREIGHT.LOCAL/Corp/Employees/HQ-NYC/IT/Security Analysts/ACADEMY-IAD-W10 172.16.6.135
 ```
 
+## Conclusion
 
+In this lab, we walked through a series of common Active Directory administrative tasks within the fictional **Inlanefreight** enterprise environment. 
+We created and managed user accounts through both the GUI and PowerShell, cleaned up inactive objects, reset and unlocked a locked account, 
+and organized resources by building a new Security Group and OU for the new-hire analysts. 
+We also duplicated and customized Group Policy Objects (GPOs) to apply security controls, validated domain joins, and confirmed DNS functionality. 
+
+> This full lab exercise is available as part of the **Hack The Box Academy Active Directory module**.
 
 
 
