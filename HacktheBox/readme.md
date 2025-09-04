@@ -15,3 +15,4 @@ Click any title to view the full writeup.
 - [Password Attacks Lab (CPTS)](Password-Attacks-Lab-CPTS.md)
 - [Shells & Payloads Live Engagement](Shells%26Payloads-Live-Engagement.md)  <!-- encode & as %26 -->
 - [Titanic](Titanic.md)
+- [Chisel](HacktheBox/how-to-chisel.md)
