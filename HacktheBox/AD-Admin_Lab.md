@@ -11,28 +11,28 @@ By the end of this session, you’ll have hands-on experience with Active Direct
 ## Tasks
 The following tasks need to be completed as part of the lab scenario:
 
-1. **Add New Hires into Active Directory**  
+ **Add New Hires into Active Directory**  
    - Create accounts for new employees starting Monday.
 
-2. **Remove Inactive User and Computer Objects**  
+ **Remove Inactive User and Computer Objects**  
    - Clean up old accounts identified during the audit.
 
-3. **Unlock Adam Masters’ Account**  
+ **Unlock Adam Masters’ Account**  
    - Resolve the account lockout issue (see trouble-ticket).
 
-4. **Create a Security Group and New OU**  
+ **Create a Security Group and New OU**  
    - Set up a new Security Group for the new-hire analysts.  
    - Create a new OU for the group and their corresponding PCs.
 
-5. **Add New-Hire Computers to the Domain**  
+ **Add New-Hire Computers to the Domain**  
    - Join provisioned computers to the domain.  
    - Verify that the objects are placed in the correct OU.
 
-6. **Create and Apply a New Group Policy Object (GPO)**  
+ **Create and Apply a New Group Policy Object (GPO)**  
    - Duplicate an existing GPO in GPMC.  
    - Modify it for Analyst users.
 
-7. **Validate DNS Records**  
+ **Validate DNS Records**  
    - Ensure DNS records exist for the host:  
      `Sharepoint02.inlanefreight.local`
 
@@ -44,7 +44,7 @@ For this lab, you’ll be working with a domain-joined Windows Server. This mach
 To access it, you will connect remotely over RDP (Remote Desktop Protocol) using either Pwnbox or your own virtual machine connected through the VPN.
 
 
-## Task 1: Manage Users
+## Manage Users
 
 ### Adding an AD User via the GUI
 To add an AD user via the GUI we first need to open Active Directory Users and Computers via the Start Menu folder Administrative Tools.
@@ -116,7 +116,7 @@ TIP: If not seeing user inside IT OU click F5 and new user should appear:
 Choose a technique mentioned above to add the last user requested. 
 
 
-## Task 2: Removing the users `Mike O'Hare` and `Paul Valencia`
+## Removing the users `Mike O'Hare` and `Paul Valencia`
 
 ### Removal via Powershell: 
 
@@ -139,7 +139,7 @@ Right Click user and DELETE:
 <img width="471" height="194" alt="image" src="https://github.com/user-attachments/assets/3d4400f6-ee8c-4c84-9e0d-f2d8c6a7a8dd" />
 
 
-## Task 3: Unlock Adam Masters' Account
+## Unlock Adam Masters' Account
 
 In Powershell: 
 
@@ -159,7 +159,7 @@ Set-ADUser -Identity amasters -ChangePasswordAtLogon $true
 <img width="799" height="59" alt="image" src="https://github.com/user-attachments/assets/c4b57796-b63c-4f38-a7c1-bf3a2d9129b1" />
 
 
-## Task 4: Create a Security Group and New OU
+## Create a Security Group and New OU
 
 ### Set up a new Security Group for the new-hire analysts.
 
@@ -266,6 +266,55 @@ Repeat these steps, configuring the properties for the Password History policy a
 <img width="519" height="634" alt="image" src="https://github.com/user-attachments/assets/92a1bc72-887e-40b5-889c-30c0a147bed2" />
 
 <img width="519" height="643" alt="image" src="https://github.com/user-attachments/assets/79542975-5589-47b0-bd18-d9696f1a8548" />
+
+## Adding local machine to the domain
+
+
+Using the Add-Computer Cmdlet, add the local machine to the domain and then restart it:
+
+<img width="1077" height="688" alt="image" src="https://github.com/user-attachments/assets/5c0d70ce-5f7e-49ec-a41a-0346f73413b0" />
+
+<img width="1280" height="782" alt="image" src="https://github.com/user-attachments/assets/32c48475-b11d-4c77-ae99-c9dc51256cc1" />
+
+## Verify the machine has joined the domain:
+
+```
+New Certificate details:
+	Common Name: ACADEMY-IAD-W10.INLANEFREIGHT.LOCAL
+	Subject:     CN = ACADEMY-IAD-W10.INLANEFREIGHT.LOCAL
+	Issuer:      CN = ACADEMY-IAD-W10.INLANEFREIGHT.LOCAL
+	Thumbprint:  e3:b4:1a:9d:07:18:0f:53:42:1d:48:6a:5a:e2:27:9c:2d:2d:6c:fe:d4:0c:75:19:31:1f:89:a6:48:a2:8b:66
+
+Old Certificate details:
+	Subject:     CN = ACADEMY-IAD-W10
+	Issuer:      CN = ACADEMY-IAD-W10
+	Thumbprint:  7a:86:c9:7c:d5:d3:b8:03:f2:35:ce:ea:e0:70:c7:39:d4:ed:25:80:81:74:d9:b7:82:19:ce:1b:6c:db:ff:22
+```
+
+Open the ADUC MMC, navigate to Computers, and confirm the `ACADEMY-IAD-W10` machine is there:
+
+<img width="763" height="284" alt="image" src="https://github.com/user-attachments/assets/e426dcda-ef6b-436f-8061-8a1360de17fa" />
+
+Right click the `ACADEMY-IAD-W10` machine, select "Move...", and add it to the Security Analysts OU:
+
+<img width="760" height="564" alt="image" src="https://github.com/user-attachments/assets/d7afb605-65e9-4cd3-a608-1a7ebec508da" />
+
+<img width="764" height="280" alt="image" src="https://github.com/user-attachments/assets/bccc940f-2f78-43c3-8adc-7d06a3d5615a" />
+
+An administrator PowerShell can be used to confirm the OU membership:
+
+```
+PS C:\Windows\system32> Get-ADComputer -Identity "ACADEMY-IAD-W10" -Properties * | select CN,CanonicalName,IPv4Address
+
+CN              CanonicalName                                                                  IPv4Address
+--              -------------                                                                  -----------
+ACADEMY-IAD-W10 INLANEFREIGHT.LOCAL/Corp/Employees/HQ-NYC/IT/Security Analysts/ACADEMY-IAD-W10 172.16.6.135
+```
+
+
+
+
+
 
 
 
