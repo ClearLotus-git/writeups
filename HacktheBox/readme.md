@@ -6,7 +6,7 @@ Click any title to view the full writeup.
 ---
 
 ## Machines & Labs
-
+- [AD Admin](AD-Admin_Lab.md)
 - [Attacking-Common-Services-HARD](Attacking-Common-Services-HARD.md
 )
 - [Attacking Windows Credential Manager](Attacking_Windows_Credential%20_Manager.md)
