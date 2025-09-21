@@ -1,6 +1,6 @@
 # Hack The Box Writeups
 
-Retired HackTheBox machines and challenge labs I've completed.  
+HackTheBox machines and challenge labs I've completed.  
 Click any title to view the full writeup.
 
 ---
