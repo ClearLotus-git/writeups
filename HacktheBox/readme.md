@@ -2,7 +2,7 @@
 
 HackTheBox machines and challenge labs I've completed.  
 Click any title to view the full writeup.
-
+(This list isn't updated.. refer to the directory above)
 ---
 
 ## Machines & Labs
