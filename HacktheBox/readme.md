@@ -20,4 +20,4 @@ Click any title to view the full writeup/exercise.
 - [Expressway](expressway.md)
 - [How to Chisel](how-to-chisel.md)
 - [Web Fuzzing Assessment](web_fuzzing-assessment.md)
-- [Readme](readme.md)
+
