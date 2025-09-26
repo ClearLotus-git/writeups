@@ -1,6 +1,6 @@
 <img width="1000" height="566" alt="image" src="https://github.com/user-attachments/assets/573c197a-555d-4efa-8be1-e1701289afa6" />
 
-# SANS Holiday Hack Challenge 2022 – KringleCon V: Golden Rings <img width="27" height="25" alt="image" src="https://github.com/user-attachments/assets/c02ed3ca-9a4e-4f61-a2ee-b13bdc59faae" />
+# UNOFFICIAL SANS Holiday Hack Challenge 2022 – KringleCon V: Golden Rings <img width="27" height="25" alt="image" src="https://github.com/user-attachments/assets/c02ed3ca-9a4e-4f61-a2ee-b13bdc59faae" />
 
 The Golden Rings Challenge quickly became one of my favorite cybersecurity events, thanks to its creative inspiration drawn from The Lord of the Rings. As a long-time fan of both fantasy and security, I was excited to take part in a challenge that blended the two so well.
 
