@@ -1,4 +1,4 @@
-This was apart of the HTB Holmes CTF. I think alot of people were curious about a script / how to find this flag: 
+This was part of the HTB Holmes CTF. I think alot of people were curious about a script / how to find this flag: 
 
 <img width="413" height="61" alt="image" src="https://github.com/user-attachments/assets/c19ae83c-d767-4c84-be62-150ba1b5a7ab" />
 
