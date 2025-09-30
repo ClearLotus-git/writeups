@@ -6,8 +6,6 @@ Click any title to view the full writeup/exercise.
 
 ## Machines & Labs
 
-## Machines & Labs
-
 - [AD Admin](AD-Admin_Lab.md)
 - [AD Enumeration & Attacks Skills Assessment](AD_Enumeration&Attacks-SkillsAssessment.md)
 - [Attacking Common Services - HARD](Attacking-Common-Services-HARD.md)
