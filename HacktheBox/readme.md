@@ -11,6 +11,7 @@ Click any title to view the full writeup/exercise.
 - [Attacking Common Services - HARD](Attacking-Common-Services-HARD.md)
 - [Attacking Windows Credential Manager](Attacking_Windows_Credential_Manager.md)
 - [Backfire](Backfire.md)
+- [Command Injections](Command_Injections.md)
 - [Cross-Site-Scripting Skills Assessment](Cross-Site-Scripting_SkillsAssessment.md)
 - [Enduring Echo](Enduring_Echo.md)
 - [File Upload Attacks](File_Upload_Attacks.md)
