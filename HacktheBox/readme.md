@@ -26,5 +26,6 @@ Click any title to view the full writeup/exercise.
 - [Expressway](expressway.md)
 - [How to chisel](how-to-chisel.md)
 - [Imagery](imagery.md)
+- [Web Attacks](web_attacks.md)
 - [Web Fuzzing Assessment](web_fuzzing-assessment.md)
 
