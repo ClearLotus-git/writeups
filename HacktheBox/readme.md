@@ -9,6 +9,7 @@ Click any title to view the full writeup/exercise.
 - [AD Admin](AD-Admin_Lab.md)
 - [AD Enumeration & Attacks Skills Assessment](AD_Enumeration&Attacks-SkillsAssessment.md)
 - [Attacking Common Services - HARD](Attacking-Common-Services-HARD.md)
+- [Attacking Thick Client Applications](Attacking_Thick_Client_Applications.md)
 - [Attacking Windows Credential Manager](Attacking_Windows_Credential_Manager.md)
 - [Backfire](Backfire.md)
 - [Command Injections](Command_Injections.md)
