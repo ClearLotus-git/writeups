@@ -19,6 +19,7 @@ Click any title to view the full writeup/exercise.
 - [Cross-Site-Scripting Skills Assessment](Cross-Site-Scripting_SkillsAssessment.md)
 - [Enduring Echo](Enduring_Echo.md)
 - [File Upload Attacks](File_Upload_Attacks.md)
+- [Linux Local Privilege Escalation](Linux_Local_Privilege_Escalation.md)
 - [Login Brute-forcing Assessment](Login-Brute-forcing-Assessment.md)
 - [Password Attacks Lab - CPTS](Password-Attacks-Lab-CPTS.md)
 - [Pivoting, Tunneling & Port Forwarding](Pivoting-Tunneling-Port_Forwarding.md)
