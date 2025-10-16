@@ -23,6 +23,7 @@ Click any title to view the full writeup/exercise.
 - [Login Brute-forcing Assessment](Login-Brute-forcing-Assessment.md)
 - [Password Attacks Lab - CPTS](Password-Attacks-Lab-CPTS.md)
 - [Pivoting, Tunneling & Port Forwarding](Pivoting-Tunneling-Port_Forwarding.md)
+- [Print Operators Priv Esc](Print_Operators_Priv_Esc.md)
 - [SQLMAP ESSENTIALS](SQLMAP-ESSENTIALS.md)
 - [SQL Fundamentals Skills Assessment](SQL_Fundamentals_Skills_Assessment.md)
 - [Shells & Payloads Live Engagement](Shells&Payloads-Live-Engagement.md)
