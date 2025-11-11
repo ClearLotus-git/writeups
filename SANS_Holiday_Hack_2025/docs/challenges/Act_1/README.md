@@ -1,3 +1,0 @@
-With Santa away, Wombley Cube and Alabaster Snowball have each tried to lead. Surely they won't mess up the naughty and nice list...
-
-Help Bow, Morcel, and Jewell solve their challenges.
