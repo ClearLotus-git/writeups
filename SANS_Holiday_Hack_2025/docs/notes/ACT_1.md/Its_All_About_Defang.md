@@ -2,11 +2,16 @@ Its All About Defang
 
 Difficulty: 1/5
 
-Task:
+Objective:
 
 Find Ed Skoudis upstairs in City Hall and help him troubleshoot a clever phishing tool in his cozy office.
 
+
+
 <img width="979" height="716" alt="image" src="https://github.com/user-attachments/assets/27e7e25f-0dba-45ee-95d6-bd493b2ec275" />
+
+<img width="1144" height="591" alt="image" src="https://github.com/user-attachments/assets/06d2c654-9131-4eab-8445-6a81a62de506" />
+
 
 <img width="431" height="308" alt="image" src="https://github.com/user-attachments/assets/4e55dc32-6507-49b0-8320-bf411ec04c62" />
 
