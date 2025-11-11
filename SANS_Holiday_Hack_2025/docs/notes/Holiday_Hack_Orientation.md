@@ -11,3 +11,5 @@ Access the terminal:
 
 
 type answer in the above terminal to get the objectives 
+
+After exit through the train door to go to the town
