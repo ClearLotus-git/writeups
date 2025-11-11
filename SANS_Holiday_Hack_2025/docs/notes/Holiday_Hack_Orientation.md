@@ -12,4 +12,8 @@ Access the terminal:
 
 type answer in the above terminal to get the objectives 
 
+
 After exit through the train door to go to the town
+
+<img width="624" height="486" alt="image" src="https://github.com/user-attachments/assets/930fcbd1-4f4f-4bd4-ac6f-2db3029602da" />
+
