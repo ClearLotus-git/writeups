@@ -180,9 +180,10 @@ Documentation: https://learn.microsoft.com/en-us/cli/azure/network/nsg/rule?view
 
 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 neighbor@a3037749367b:~$ az network nsg rule list \
->   --nsg-name nsg-mgmt-eastus \
->   --resource-group theneighborhood-rg2 \
->   --output table
+  --nsg-name nsg-mgmt-eastus \
+  --resource-group theneighborhood-rg2 \
+  --output table
+
 Access    Direction    Name                        Priority    Protocol    NSG              SourceAddressPrefix    SourcePortRange    DestinationAddressPrefix    DestinationPortRange
 --------  -----------  --------------------------  ----------  ----------  ---------------  ---------------------  -----------------  --------------------------  ----------------------
 Allow     Inbound      Allow-AzureBastion          100         Tcp         nsg-mgmt-eastus  AzureBastion           *                  *                           443
@@ -202,14 +203,50 @@ Hint: Review fields such as direction, access, protocol, source, destination and
 Documentation: https://learn.microsoft.com/en-us/cli/azure/network/nsg/rule?view=azure-cli-latest#az-network-nsg-rule-show
 
 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-neighbor@a3037749367b:~$
+neighbor@632183de78fe:~$ az network nsg rule list --nsg-name nsg-production-eastus --resource-group theneighborhood-rg1 --output table
+
+Access    Direction    Name                           Priority    Protocol    NSG                    SourceAddressPrefix    SourcePortRange    DestinationAddressPrefix    DestinationPortRange
+--------  -----------  -----------------------------  ----------  ----------  ---------------------  ---------------------  -----------------  --------------------------  ----------------------
+Allow     Inbound      Allow-HTTP-Inbound             100         Tcp         nsg-production-eastus  0.0.0.0/0              *                  *                           80
+Allow     Inbound      Allow-HTTPS-Inbound            110         Tcp         nsg-production-eastus  0.0.0.0/0              *                  *                           443
+Allow     Inbound      Allow-AppGateway-HealthProbes  115         Tcp         nsg-production-eastus  AzureLoadBalancer      *                  *                           80,443
+Allow     Inbound      Allow-RDP-From-Internet        120         Tcp         nsg-production-eastus  0.0.0.0/0              *                  *                           3389
+Deny      Inbound      Deny-All-Inbound               4096        *           nsg-production-eastus  *                      *                  *                           *
 ```
 
+Then run to inspect the properties of the RDP from internet:
+
+```
+neighbor@632183de78fe:~$ az network nsg rule show --resource-group theneighborhood-rg1 --nsg-name nsg-production-eastus --name Allow-RDP-From-Internet --output json
+
+{
+  "name": "Allow-RDP-From-Internet",
+  "properties": {
+    "access": "Allow",
+    "destinationPortRange": "3389",
+    "direction": "Inbound",
+    "priority": 120,
+    "protocol": "Tcp",
+    "sourceAddressPrefix": "0.0.0.0/0"
+  }
+}
+```
+
+```
+Great, you found the NSG misconfiguration allowing RDP (port 3389) from the public internet!
+Port 3389 is used by Remote Desktop Protocol — exposing it broadly allows attackers to brute-force credentials, exploit RDP vulnerabilities, and pivot within the network.
+
+✨ To finish, type: finish
 
 
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+neighbor@632183de78fe:~$ finish
+Completing challenge...
+```
 
-
-
+```
+🎉 Challenge complete! 🎉
+```
 
 
 
