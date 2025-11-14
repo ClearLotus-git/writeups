@@ -8,10 +8,10 @@ Objective : Assist Kyle at the old data center with a fire alarm that just won't
 Task: 
 
 Go to the Data Center
-( The route can be kinda confusing with a gate being around the building.. so just click on the door space and your 
-character will auto-route )
+( The route can be kinda confusing with a gate being around the building..)
 
-<img width="874" height="578" alt="image" src="https://github.com/user-attachments/assets/9bd87282-238d-40ba-aedb-21454d906f96" />
+<img width="510" height="519" alt="image" src="https://github.com/user-attachments/assets/70cc6d17-34e1-4f7f-bf11-91e121f24d30" />
+
 
 <img width="775" height="535" alt="image" src="https://github.com/user-attachments/assets/90afbcfb-39fd-4367-9923-c2eb86155749" />
 
