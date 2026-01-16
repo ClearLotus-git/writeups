@@ -212,7 +212,7 @@ SELECT IS_SRVROLEMEMBER('sysadmin');
 Dump Nthash with command:
 
 ```
-echo -n 'purPLE9795\!0' | iconv -f UTF-8 -t UTF-16LE | openssl md4
+echo -n 'purPLE9795!@' | iconv -f UTF-8 -t UTF-16LE | openssl md4
 ```
 
 ```
