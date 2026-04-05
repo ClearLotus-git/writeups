@@ -42,6 +42,7 @@ What was the SIA agent’s activity related to enumerating identities & permissi
 
 eventName keypair
 
+| select(.userIdentity.userName=="agentdarius")
 
 What managed policy did the SIA agent have?
 
