@@ -8,7 +8,7 @@ Use the process tree to see what was launched and by what parent.
 
 Command:
 ```
-python vol.py -f evidence.vmem windows.pstree
+python3 vol.py -f ../Winny.vmem windows.pstree
 ```
 
 Output:
