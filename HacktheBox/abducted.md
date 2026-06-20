@@ -290,7 +290,7 @@ ln -s /home/marcus /srv/transfer/marcus
 ```
 
 ```
-mbclient //10.129.31.227/transfer -U 'scott%iXzvcib3SrpZ'
+smbclient //10.129.31.227/transfer -U 'scott%iXzvcib3SrpZ'
 Try "help" to get a list of possible commands.
 smb: \> ls
   .                                   D        0  Fri Jun 19 16:26:47 2026
@@ -310,7 +310,7 @@ Create ssh key in kali files:
 ssh-keygen -t rsa -b 4096
 ```
 ```
-sh-keygen -t rsa -b 4096
+ssh-keygen -t rsa -b 4096
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/kali/.ssh/id_rsa): 
 Enter passphrase for "/home/kali/.ssh/id_rsa" (empty for no passphrase): 
