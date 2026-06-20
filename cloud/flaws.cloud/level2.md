@@ -18,6 +18,8 @@ After creating a dedicated IAM user, we generate an access key and configure the
 
 <img width="629" height="367" alt="image" src="https://github.com/user-attachments/assets/6f87be52-a8a3-4cd0-a555-ad92f8168af1" />
 
+Since anonymous enumeration was denied, we use our authenticated AWS CLI profile to list the bucket contents. Unlike the previous level, the bucket policy permits authenticated users to perform the `ListBucket` action, exposing several files including a hidden secret page.
+
 ```
 aws s3 ls s3://level2-c8b217a33fcf1f839f6f1f73a00a9ae7.flaws.cloud                  
 2017-02-26 21:02:15      80751 everyone.png
@@ -28,9 +30,12 @@ aws s3 ls s3://level2-c8b217a33fcf1f839f6f1f73a00a9ae7.flaws.cloud
 2017-02-26 21:02:15       1051 secret-e4443fc.html
 ```
 
+Among the listed objects is `secret-e4443fc.html`. We download the file locally using the AWS CLI to inspect its contents and search for the next stage of the challenge.
+
 ```
 aws s3 cp s3://level2-c8b217a33fcf1f839f6f1f73a00a9ae7.flaws.cloud/secret-e4443fc.html .
 ```
+Viewing the downloaded HTML file reveals another hidden page containing the URL for Level 3. This demonstrates how overly permissive S3 bucket policies can expose sensitive files to unintended users, even when anonymous access is restricted.
 
 ```
 cat secret-e4443fc.html
