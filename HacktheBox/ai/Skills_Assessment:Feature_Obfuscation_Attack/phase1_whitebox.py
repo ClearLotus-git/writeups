@@ -118,6 +118,68 @@ for review in reviews:
         probabilities,
     )
 
+def negative_probability(text: str) -> float:
+    vector = vectorizer.transform([text])
+    probabilities = classifier.predict_proba(vector)[0]
+    return float(probabilities[negative_index])
+
+
+candidate_words = [
+    item["word"]
+    for item in negative_words[:100]
+]
+
+
+def solve_whitebox_review(
+    original_text: str,
+    max_words: int,
+) -> tuple[str, list[str], dict]:
+    added_words: list[str] = []
+    current_text = original_text
+
+    for position in range(max_words):
+        best_word = None
+        best_probability = -1.0
+        best_label = None
+
+        for word in candidate_words:
+            test_text = current_text + " " + word
+            label, _ = local_predict(test_text)
+            probability = negative_probability(test_text)
+
+            if probability > best_probability:
+                best_probability = probability
+                best_word = word
+                best_label = label
+
+        if best_word is None:
+            break
+
+        added_words.append(best_word)
+        current_text = original_text + " " + " ".join(added_words)
+
+        print(
+            f"  {position + 1:02d} "
+            f"word={best_word:18s} "
+            f"negative_probability={best_probability:.6f} "
+            f"label={best_label}"
+        )
+
+        label, probabilities = local_predict(current_text)
+
+        if label == "negative":
+            return current_text, added_words, {
+                "label": label,
+                "probabilities": probabilities.tolist(),
+            }
+
+    label, probabilities = local_predict(current_text)
+
+    return current_text, added_words, {
+        "label": label,
+        "probabilities": probabilities.tolist(),
+    }
+
 solutions = []
 
 for review in reviews:
