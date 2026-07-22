@@ -117,3 +117,32 @@ for review in reviews:
         label,
         probabilities,
     )
+
+solutions = []
+
+for review in reviews:
+    print("\nSolving:", review["id"])
+
+    augmented_text, added_words, result = solve_whitebox_review(
+        review["text"],
+        budget,
+    )
+
+    print("Final label:", result["label"])
+    print("Words added:", len(added_words))
+    print("Added sequence:", " ".join(added_words))
+
+    solutions.append(
+        {
+            "id": review["id"],
+            "augmented_text": augmented_text,
+        }
+    )
+
+submission = post_json(
+    "/submit/whitebox",
+    {"solutions": solutions},
+)
+
+print("\nSubmission response:")
+print(submission)
