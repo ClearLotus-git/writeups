@@ -62,3 +62,41 @@ print("Classes:", classifier.classes_)
 print("Features:", len(feature_names))
 print("Reviews:", len(reviews))
 print("Word budget:", budget)
+
+classes = list(classifier.classes_)
+
+negative_index = classes.index("negative")
+positive_index = classes.index("positive")
+
+negative_log_probabilities = classifier.feature_log_prob_[negative_index]
+positive_log_probabilities = classifier.feature_log_prob_[positive_index]
+
+# Positive value means the word favors the negative class.
+negative_strength = (
+    negative_log_probabilities
+    - positive_log_probabilities
+)
+
+ranked_indices = np.argsort(negative_strength)[::-1]
+
+negative_words = []
+
+for index in ranked_indices:
+    word = str(feature_names[index])
+
+    # Keep simple letter-only words to avoid tokenization surprises.
+    if word.isalpha() and len(word) > 1:
+        negative_words.append(
+            {
+                "word": word,
+                "strength": float(negative_strength[index]),
+            }
+        )
+
+print("\nStrongest negative-associated words:")
+
+for item in negative_words[:30]:
+    print(
+        f"{item['word']:20s} "
+        f"strength={item['strength']:.4f}"
+    )
