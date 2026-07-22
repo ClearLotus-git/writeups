@@ -100,3 +100,20 @@ for item in negative_words[:30]:
         f"{item['word']:20s} "
         f"strength={item['strength']:.4f}"
     )
+
+def local_predict(text: str) -> tuple[str, np.ndarray]:
+    vector = vectorizer.transform([text])
+    label = str(classifier.predict(vector)[0])
+    probabilities = classifier.predict_proba(vector)[0]
+
+    return label, probabilities
+
+
+for review in reviews:
+    label, probabilities = local_predict(review["text"])
+
+    print(
+        review["id"],
+        label,
+        probabilities,
+    )
