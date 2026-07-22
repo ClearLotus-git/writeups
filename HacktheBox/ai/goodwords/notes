@@ -1,0 +1,9 @@
+# Random Notes
+
+- Printed the base message first because I kept forgetting what I was actually testing.
+- Watching the probability after every appended word made debugging much easier.
+- Tiny probability changes can still represent meaningful shifts in the model's confidence.
+- The challenge became much easier once I stopped thinking about "finding the magic word" and started treating it like an optimization problem.
+- Most of the work was just querying the model, recording results, and repeating the process.
+- Black-box doesn't mean "no information"; it just means the information comes from observations instead of internal model access.
+- Good reminder that ML models can leak a lot about their decision process just through prediction APIs.
