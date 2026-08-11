@@ -53,6 +53,14 @@ $ curl -s -X POST "$BASE_URL/submit" \
 
 Start:
 
+1. Create script
+2. Run script --- deepfool.py
+3. obtain flag
+
+
+
+<img width="746" height="695" alt="image" src="https://github.com/user-attachments/assets/22036bf0-2e57-4cb2-8346-c01afda51857" />
+
 
 
 
