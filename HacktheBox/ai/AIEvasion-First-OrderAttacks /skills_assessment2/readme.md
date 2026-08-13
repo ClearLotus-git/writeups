@@ -43,6 +43,16 @@ Approximate boundary distances:
 python3 deepfool_one_step.py
 ```
 
+Output:
+
+```
+Prediction before: 7
+Closest class: 9
+Estimated boundary distance: 0.6723567843437195
+Prediction after one DeepFool step: 7
+Normalized-space L2: 0.6858038902282715
+Threshold: 3.5
+```
 
 
 
