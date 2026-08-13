@@ -8,6 +8,19 @@ import torchvision.transforms as transforms
 
 from model import load_model
 
+def tensor_to_base64(tensor: torch.Tensor) -> str:
+    tensor = tensor.detach().cpu()
+    img_array = (
+        tensor.permute(1, 2, 0).numpy() * 255
+    ).round().clip(0, 255).astype("uint8")
+
+    img = Image.fromarray(img_array)
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+
+    return base64.b64encode(
+        buffer.getvalue()
+    ).decode("ascii")
 
 BASE_URL = "http://154.57.164.82:31284"
 
