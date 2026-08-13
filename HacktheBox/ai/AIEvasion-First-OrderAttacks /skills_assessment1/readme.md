@@ -95,6 +95,9 @@ Output:
 }
 ```
 
+```
+pip3 install numpy requests torch torchvision
+```
 
 
 
