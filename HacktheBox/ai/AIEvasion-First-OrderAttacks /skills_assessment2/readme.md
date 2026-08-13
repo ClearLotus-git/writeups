@@ -16,3 +16,33 @@ Output:
 ```
 curl -s "$BASE_URL/model/weights" -o cifar10_model_best.pth
 ```
+
+```
+python3 deepfool_step.py
+```
+
+Output:
+
+```
+Current prediction: 7
+
+Approximate boundary distances:
+0: airplane   distance ≈ 1.267534
+1: automobile distance ≈ 1.083013
+2: bird       distance ≈ 1.201886
+3: cat        distance ≈ 0.829084
+4: deer       distance ≈ 1.079623
+5: dog        distance ≈ 0.832938
+6: frog       distance ≈ 1.065910
+8: ship       distance ≈ 1.107970
+9: truck      distance ≈ 0.672357
+
+```
+
+```
+python3 deepfool_one_step.py
+```
+
+
+
+
