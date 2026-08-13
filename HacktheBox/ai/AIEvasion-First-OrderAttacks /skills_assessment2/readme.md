@@ -54,5 +54,11 @@ Normalized-space L2: 0.6858038902282715
 Threshold: 3.5
 ```
 
+```
+$ python3 challenge2.py --host http://154.57.164.82:32220
+```
+
+<img width="1012" height="505" alt="image" src="https://github.com/user-attachments/assets/3fe6fcca-6285-4128-a5e6-71afbd9aa7ea" />
+
 
 
