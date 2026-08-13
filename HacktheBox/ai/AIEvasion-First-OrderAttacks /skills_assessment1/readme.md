@@ -100,6 +100,13 @@ pip3 install numpy requests torch torchvision
 ```
 
 
+Run script:
+
+```
+$ python3 challenge.py --host http://IP:PORT
+```
+
+<img width="1021" height="591" alt="image" src="https://github.com/user-attachments/assets/6a71589e-8c1d-47da-9a8e-50140f4a6cce" />
 
 
 
